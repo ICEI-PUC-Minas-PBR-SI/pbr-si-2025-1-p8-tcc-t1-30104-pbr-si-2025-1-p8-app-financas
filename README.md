@@ -1,11 +1,11 @@
 # Informações sobre o Trabalho de Conclusão de Curso (TCC)
-`TÍTULO DO TCC`  
+`Desenvolvimento de Aplicativo de Finanças: Gestão no Bolso`  
 
 Trabalho de Conclusão de Curso (TCC)
 
-`CURSO`: 
+`CURSO`: Sistemas de Informação
 
-`SEMESTRE:`
+`SEMESTRE:` 1º / 2025
 
 `Objetivos de Desenvolvimento Sustentável (ODS) da ONU:` 
 > Incluir o(s) número(s) e a(s) descrição(ões) do(s) ODS da ONU que o TCC atende. 
@@ -13,8 +13,8 @@ Trabalho de Conclusão de Curso (TCC)
 ## Participantes
 
 Os membros da equipe são: 
-- Fulano da Silva
-- Ciclano Albuquerque
+- Frederico Mendes
+- João Victor Amaral Gonçalves Lima
 
 > Incluir a lista dos membros da equipe com seus nomes completos.
 
