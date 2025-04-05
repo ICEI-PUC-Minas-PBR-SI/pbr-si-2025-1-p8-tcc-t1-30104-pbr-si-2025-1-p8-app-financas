@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import axios from 'axios'
 import * as SecureStore from 'expo-secure-store'
+import API_URL from '../services/api'
 
 interface AuthProps {
   authState?: { token: string | null; authenticated: boolean | null }
@@ -10,8 +11,6 @@ interface AuthProps {
 }
 
 const TOKEN_KEY = 'my-jwt'
-
-export const API_URL = 'http://192.168.18.222:3000'
 
 const AuthContext = createContext<AuthProps>({})
 
@@ -41,7 +40,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const register = async (name: string, email: string, password: string) => {
     try {
-      const result = await axios.post(`${API_URL}/auth/register`, {
+      const result = await API_URL.post(`/auth/register`, {
         name,
         email,
         password,
@@ -58,7 +57,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const login = async (email: string, password: string) => {
     try {
-      const result = await axios.post(`${API_URL}/auth/login`, {
+      const result = await API_URL.post(`/auth/login`, {
         email,
         password,
       })
