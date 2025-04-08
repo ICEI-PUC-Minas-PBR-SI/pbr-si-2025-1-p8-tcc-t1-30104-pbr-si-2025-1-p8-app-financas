@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { View, Text, StyleSheet, Button } from 'react-native'
-import ChatButton from '../components/Chat/ChatButton'
-import ChatModal from '../components/Chat/chatModal'
+import ChatButton from '../components/chat/ChatButton'
+import ChatModal from '../components/chat/chatModal'
 import { useAuth } from '../context/AuthContext'
 
 const HomeScreen: React.FC = () => {

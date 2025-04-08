@@ -8,6 +8,7 @@ interface AuthProps {
   onRegister?: (name: string, email: string, password: string) => Promise<any>
   onLogin?: (email: string, password: string) => Promise<any>
   onLogout?: () => Promise<any>
+  userInfo?: (name: string, email: string) => Promise<any>
 }
 
 const TOKEN_KEY = 'my-jwt'
@@ -26,13 +27,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     token: null,
     authenticated: null,
   })
+  const [userInfo, setUserInfo] = useState<any>(null)
 
   useEffect(() => {
     const loadToken = async () => {
       const token = await SecureStore.getItemAsync(TOKEN_KEY)
+      const info = await SecureStore.getItemAsync(userInfo)
       if (token) {
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
         setAuthState({ token, authenticated: true })
+        setUserInfo(info)
       }
     }
     loadToken()
@@ -64,9 +68,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const tempToken = result.data.result.token
       setAuthState({ token: tempToken, authenticated: true })
 
-      axios.defaults.headers.common['Authorization'] = `Bearer ${tempToken}`
+      setUserInfo(result.data.result.user)
 
-      await SecureStore.setItemAsync(TOKEN_KEY, tempToken)
+      API_URL.defaults.headers.common['Authorization'] = `Bearer ${tempToken}`
+
+      await SecureStore.setItemAsync(TOKEN_KEY, tempToken, userInfo)
 
       return result
     } catch (error) {
@@ -85,6 +91,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     axios.defaults.headers.common['Authorization'] = ''
 
     setAuthState({ token: null, authenticated: false })
+    setUserInfo(null)
   }
 
   const value = {
@@ -92,6 +99,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     onLogin: login,
     onLogout: logout,
     authState,
+    userInfo,
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
