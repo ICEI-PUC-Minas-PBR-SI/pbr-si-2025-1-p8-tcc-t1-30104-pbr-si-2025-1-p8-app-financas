@@ -1,6 +1,7 @@
 import React from 'react'
 import { TouchableOpacity, StyleSheet } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
+import colors from '../../utils/colors'
 
 interface ChatButtonProps {
   onPress: () => void
@@ -9,7 +10,7 @@ interface ChatButtonProps {
 const ChatButton: React.FC<ChatButtonProps> = ({ onPress }) => {
   return (
     <TouchableOpacity style={styles.chatButton} onPress={onPress}>
-      <Ionicons name="chatbubble-ellipses" size={28} color="white" />
+      <Ionicons name="chatbubble-ellipses" size={28} color={colors.white} />
     </TouchableOpacity>
   )
 }
@@ -19,13 +20,13 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 20,
     right: 20,
-    backgroundColor: '#007AFF',
+    backgroundColor: colors.primary,
     width: 60,
     height: 60,
     borderRadius: 30,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#000',
+    shadowColor: colors.black,
     shadowOpacity: 0.3,
     shadowOffset: { width: 0, height: 2 },
   },

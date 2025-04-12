@@ -1,21 +1,75 @@
 import React from 'react'
-import { View, Text, StyleSheet, TouchableOpacity, Button } from 'react-native'
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  FlatList,
+} from 'react-native'
 import { useAuth } from '../context/AuthContext'
 import { Ionicons } from '@expo/vector-icons'
+import colors from '../utils/colors'
+import { useNavigation } from '@react-navigation/native'
+
+const options = [
+  { id: '1', icon: 'create-outline', label: 'Editar Perfil' },
+  { id: '2', icon: 'settings-outline', label: 'Configurações' },
+  { id: '3', icon: 'help-circle-outline', label: 'Ajuda' },
+  { id: '4', icon: 'log-out-outline', label: 'Sair' },
+]
 
 export const Profile = () => {
-  const { onLogout, authState, userInfo } = useAuth()
+  const navigation = useNavigation()
+  const { onLogout, userInfo } = useAuth()
 
-  const handleLogout = async () => {
-    await onLogout!()
+  const handleOptionPress = (label: string) => {
+    switch (label) {
+      case 'Sair':
+        onLogout?.()
+        break
+
+      case 'Editar Perfil':
+        navigation.navigate('EditProfile')
+        break
+
+      case 'Configurações':
+        console.log('Navegar para tela de configurações')
+        break
+
+      case 'Ajuda':
+        console.log('Navegar para tela de ajuda')
+        break
+
+      default:
+        console.log(`Opção desconhecida: ${label}`)
+    }
   }
+
+  const renderItem = ({ item }: any) => (
+    <TouchableOpacity
+      style={styles.optionItem}
+      onPress={() => handleOptionPress(item.label)}
+    >
+      <Ionicons name={item.icon} size={24} color={colors.primary} />
+      <Text style={styles.optionText}>{item.label}</Text>
+    </TouchableOpacity>
+  )
 
   return (
     <View style={styles.container}>
-      <Ionicons name="person-circle-outline" size={100} color="#006666" />
+      <Ionicons
+        name="person-circle-outline"
+        size={100}
+        color={colors.primary}
+      />
       <Text style={styles.title}>{userInfo?.name}</Text>
 
-      <Button title="Sair" onPress={handleLogout} />
+      <FlatList
+        data={options}
+        renderItem={renderItem}
+        keyExtractor={item => item.id}
+        style={styles.optionsList}
+      />
     </View>
   )
 }
@@ -24,25 +78,31 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#f5f5f5',
+    paddingTop: 50,
+    backgroundColor: colors.background,
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#006666',
+    color: colors.primary,
     marginVertical: 20,
   },
-  button: {
-    backgroundColor: '#d9534f',
-    paddingVertical: 12,
+  optionsList: {
+    width: '100%',
     paddingHorizontal: 30,
-    borderRadius: 8,
-    marginTop: 20,
+    marginTop: 30,
   },
-  buttonText: {
-    color: '#fff',
+  optionItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.backgroundChat,
+  },
+  optionText: {
     fontSize: 16,
+    marginLeft: 15,
+    color: '#333',
   },
 })
 

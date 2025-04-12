@@ -8,10 +8,12 @@ interface AuthProps {
   onRegister?: (name: string, email: string, password: string) => Promise<any>
   onLogin?: (email: string, password: string) => Promise<any>
   onLogout?: () => Promise<any>
-  userInfo?: (name: string, email: string) => Promise<any>
+  userInfo?: any
+  userId?: number | null
 }
-
 const TOKEN_KEY = 'my-jwt'
+const USER_ID_KEY = 'user-id'
+const USER_INFO_KEY = 'user-info'
 
 const AuthContext = createContext<AuthProps>({})
 
@@ -28,15 +30,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     authenticated: null,
   })
   const [userInfo, setUserInfo] = useState<any>(null)
+  const [userId, setUserId] = useState<number | null>(null)
 
   useEffect(() => {
     const loadToken = async () => {
       const token = await SecureStore.getItemAsync(TOKEN_KEY)
-      const info = await SecureStore.getItemAsync(userInfo)
+      const storedUserId = await SecureStore.getItemAsync(USER_ID_KEY)
+      const storedUserInfo = await SecureStore.getItemAsync(USER_INFO_KEY)
+
       if (token) {
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
         setAuthState({ token, authenticated: true })
-        setUserInfo(info)
+
+        if (storedUserId) setUserId(Number(storedUserId))
+        if (storedUserInfo) setUserInfo(JSON.parse(storedUserInfo))
       }
     }
     loadToken()
@@ -66,13 +73,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         password,
       })
       const tempToken = result.data.result.token
-      setAuthState({ token: tempToken, authenticated: true })
+      const user = result.data.result.user
 
-      setUserInfo(result.data.result.user)
+      setAuthState({ token: tempToken, authenticated: true })
+      setUserId(user.id)
+      const { id, ...userWithoutId } = user
+      setUserInfo(userWithoutId)
 
       API_URL.defaults.headers.common['Authorization'] = `Bearer ${tempToken}`
 
-      await SecureStore.setItemAsync(TOKEN_KEY, tempToken, userInfo)
+      await SecureStore.setItemAsync(TOKEN_KEY, tempToken)
+      await SecureStore.setItemAsync(USER_ID_KEY, String(user.id))
+      await SecureStore.setItemAsync(USER_INFO_KEY, JSON.stringify(user))
 
       return result
     } catch (error) {
@@ -87,11 +99,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const logout = async () => {
     await SecureStore.deleteItemAsync(TOKEN_KEY)
+    await SecureStore.deleteItemAsync(USER_ID_KEY)
+    await SecureStore.deleteItemAsync(USER_INFO_KEY)
 
     axios.defaults.headers.common['Authorization'] = ''
 
     setAuthState({ token: null, authenticated: false })
     setUserInfo(null)
+    setUserId(null)
   }
 
   const value = {
@@ -100,6 +115,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     onLogout: logout,
     authState,
     userInfo,
+    userId,
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

@@ -2,6 +2,7 @@ import React from 'react'
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import { useNavigation } from '@react-navigation/native'
+import colors from '../utils/colors'
 
 interface HeaderProps {
   title: string
@@ -20,14 +21,14 @@ export const Header: React.FC<HeaderProps> = ({
     <View style={styles.header}>
       {showBack ? (
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color="#fff" />
+          <Ionicons name="arrow-back" size={24} color={colors.white} />
         </TouchableOpacity>
       ) : (
         <View style={{ width: 24 }} />
       )}
       <Text style={styles.title}>{title}</Text>
       {showAttachment ? (
-        <Ionicons name="attach" size={24} color="#fff" />
+        <Ionicons name="attach" size={24} color={colors.white} />
       ) : (
         <View style={{ width: 24 }} />
       )}
@@ -37,7 +38,7 @@ export const Header: React.FC<HeaderProps> = ({
 
 const styles = StyleSheet.create({
   header: {
-    backgroundColor: '#2c8f8f',
+    backgroundColor: colors.primary,
     paddingTop: 50,
     paddingBottom: 20,
     paddingHorizontal: 16,
@@ -47,7 +48,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   title: {
-    color: '#fff',
+    color: colors.white,
     fontSize: 16,
     fontWeight: '600',
   },

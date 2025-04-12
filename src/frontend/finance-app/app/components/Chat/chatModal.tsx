@@ -69,9 +69,11 @@ const ChatModal: React.FC<ChatModalProps> = ({ visible, onClose }) => {
       <View style={styles.modalContainer}>
         <View style={styles.modalContent}>
           <View style={styles.header}>
-            <Text style={styles.headerText}>Chat com a IA</Text>
+            <Text style={styles.headerText}>
+              Converse com seu Assistente Financeiro
+            </Text>
             <TouchableOpacity onPress={onClose}>
-              <Ionicons name="close" size={24} color="black" />
+              <Ionicons name="close" size={24} color={colors.black} />
             </TouchableOpacity>
           </View>
 
@@ -156,11 +158,11 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   userMessage: {
-    backgroundColor: '#007AFF',
+    backgroundColor: colors.primary,
     alignSelf: 'flex-end',
   },
   botMessage: {
-    backgroundColor: '#E5E5EA',
+    backgroundColor: colors.backgroundChat,
     color: colors.black,
   },
   messageTextUser: {
@@ -176,13 +178,13 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: colors.background,
     padding: 10,
     borderRadius: 20,
     marginRight: 10,
   },
   sendButton: {
-    backgroundColor: '#007AFF',
+    backgroundColor: colors.primary,
     borderRadius: 20,
     padding: 10,
   },

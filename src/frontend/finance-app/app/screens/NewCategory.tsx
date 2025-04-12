@@ -1,11 +1,5 @@
 import React, { useState } from 'react'
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-} from 'react-native'
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { Header } from '../components/Header'
 import { AppTextInput } from '../components/AppTextInput'

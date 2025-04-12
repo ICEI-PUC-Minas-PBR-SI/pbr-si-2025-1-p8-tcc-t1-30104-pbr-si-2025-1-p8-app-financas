@@ -1,30 +1,16 @@
 import React from 'react'
 import Wallet from '../screens/Wallet'
-import NewCategory from '../screens/NewCategory'
 import AddTransaction from '../screens/AddTransaction'
 import MonthlySummary from '../screens/graphs/MonthlySummary'
-import Profile from '../screens/Profile'
-import { View, Text } from 'react-native'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs'
+import { ProfileStack } from './authStack.routes'
 
 const Tab = createMaterialBottomTabNavigator()
 
-const Placeholder = ({ title }: { title: string }) => (
-  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-    <Text>{title}</Text>
-  </View>
-)
-
-export const AppTabs = () => {
+export const TabRoutes = () => {
   return (
-    <Tab.Navigator
-      screenOptions={({ route }: { route: { name: string } }) => ({
-        headerShown: false,
-        tabBarActiveTintColor: '#006666',
-        tabBarInactiveTintColor: 'gray',
-      })}
-    >
+    <Tab.Navigator screenOptions={{ headerShown: false }}>
       <Tab.Screen
         name="Carteira"
         component={Wallet}
@@ -35,7 +21,7 @@ export const AppTabs = () => {
         }}
       />
       <Tab.Screen name="Investimentos" component={Wallet} shifting={true} />
-      <Tab.Screen name="Transação" component={Wallet} shifting={true} />
+      <Tab.Screen name="Transação" component={AddTransaction} shifting={true} />
       <Tab.Screen
         name="Graficos"
         component={MonthlySummary}
@@ -47,8 +33,8 @@ export const AppTabs = () => {
         }}
       />
       <Tab.Screen
-        name="Perfil"
-        component={Profile}
+        name="Profile"
+        component={ProfileStack}
         shifting={true}
         options={{
           tabBarIcon: ({ color }: { color: string }) => (
@@ -60,4 +46,4 @@ export const AppTabs = () => {
   )
 }
 
-export default AppTabs
+export default TabRoutes

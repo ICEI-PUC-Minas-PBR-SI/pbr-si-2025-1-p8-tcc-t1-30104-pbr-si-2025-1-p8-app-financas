@@ -4,6 +4,7 @@ import { WalletCard } from '../components/wallet/WalletCard'
 import { TransactionItem } from '../components/wallet/TransactionItem'
 import ChatButton from '../components/chat/ChatButton'
 import ChatModal from '../components/chat/chatModal'
+import colors from '../utils/colors'
 
 export const Wallet: React.FC = () => {
   const [chatVisible, setChatVisible] = useState(false)
@@ -65,7 +66,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   header: {
-    backgroundColor: '#006666',
+    backgroundColor: colors.primary,
     paddingTop: 50,
     paddingBottom: 20,
     paddingHorizontal: 16,

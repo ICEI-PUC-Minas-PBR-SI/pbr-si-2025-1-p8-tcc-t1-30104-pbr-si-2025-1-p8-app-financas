@@ -1,5 +1,6 @@
 import React from 'react'
 import { View, Text, StyleSheet } from 'react-native'
+import colors from '../../utils/colors'
 
 interface WalletCardProps {
   balance: number
@@ -26,18 +27,18 @@ export const WalletCard: React.FC<WalletCardProps> = ({
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: '#006666',
+    backgroundColor: colors.primary,
     borderRadius: 12,
     padding: 16,
     margin: 16,
     elevation: 4,
   },
   title: {
-    color: '#fff',
+    color: colors.white,
     fontSize: 18,
   },
   balance: {
-    color: '#fff',
+    color: colors.white,
     fontSize: 28,
     fontWeight: 'bold',
     marginVertical: 8,
@@ -47,11 +48,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   income: {
-    color: 'lightgreen',
+    color: colors.greenLight,
     fontWeight: 'bold',
   },
   expense: {
-    color: '#f77',
+    color: colors.redLight,
     fontWeight: 'bold',
   },
 })

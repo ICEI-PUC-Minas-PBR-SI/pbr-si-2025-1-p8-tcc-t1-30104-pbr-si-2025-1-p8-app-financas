@@ -167,8 +167,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
   },
   logoContainer: {
-    position: 'absolute',
-    top: '15%',
+    marginBottom: 30,
     alignItems: 'center',
   },
   logoText: {

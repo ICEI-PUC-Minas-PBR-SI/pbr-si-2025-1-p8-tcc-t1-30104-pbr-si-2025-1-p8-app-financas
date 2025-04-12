@@ -114,8 +114,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
   },
   logoContainer: {
-    position: 'absolute',
-    top: '20%',
+    marginBottom: 30,
     alignItems: 'center',
   },
   logoText: {

@@ -26,7 +26,7 @@ export const MonthlySummary = () => {
 
   return (
     <View style={{ flex: 1 }}>
-      <Header title="Resumo Mensal" showBack />
+      <Header title="Resumo Mensal" />
 
       <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.sectionTitle}>Visão geral</Text>

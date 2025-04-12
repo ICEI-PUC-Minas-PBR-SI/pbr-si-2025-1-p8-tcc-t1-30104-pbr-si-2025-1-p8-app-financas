@@ -8,6 +8,7 @@ const colors = {
   secondaryDark: '#F50057',
 
   background: '#F5F5F5',
+  backgroundChat: 'rgb(202, 202, 202)',
   backgroundDark: '#212121',
   backgroundLight: '#FFFFFF',
 
@@ -25,6 +26,8 @@ const colors = {
   gray: '#9E9E9E',
   grayLight: '#BDBDBD',
   grayDark: '#616161',
+  redLight: '#f77',
+  greenLight: '#90ee90',
 }
 
 export default colors

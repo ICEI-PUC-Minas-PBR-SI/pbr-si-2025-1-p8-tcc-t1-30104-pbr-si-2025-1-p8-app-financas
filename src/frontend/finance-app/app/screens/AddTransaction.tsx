@@ -50,6 +50,10 @@ export const AddTransaction = () => {
           style={styles.dropdown}
           dropDownContainerStyle={{ borderRadius: 8 }}
         />
+        <TouchableOpacity
+          style={styles.saveButton}
+          onPress={() => navigation.navigate('NewCategory')}
+        ></TouchableOpacity>
 
         <PaperInput
           label="Detalhes"
