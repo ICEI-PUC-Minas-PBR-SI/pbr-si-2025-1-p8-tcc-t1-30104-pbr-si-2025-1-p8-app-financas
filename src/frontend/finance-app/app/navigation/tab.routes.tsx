@@ -5,6 +5,7 @@ import MonthlySummary from '../screens/graphs/MonthlySummary'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs'
 import { ProfileStack } from './authStack.routes'
+import { WalletStack } from './authStack.routes'
 
 const Tab = createMaterialBottomTabNavigator()
 
@@ -13,7 +14,7 @@ export const TabRoutes = () => {
     <Tab.Navigator screenOptions={{ headerShown: false }}>
       <Tab.Screen
         name="Carteira"
-        component={Wallet}
+        component={WalletStack}
         options={{
           tabBarIcon: ({ color }: { color: string }) => (
             <Ionicons name="wallet-outline" color={color} size={24} />
@@ -21,7 +22,16 @@ export const TabRoutes = () => {
         }}
       />
       <Tab.Screen name="Investimentos" component={Wallet} shifting={true} />
-      <Tab.Screen name="Transação" component={AddTransaction} shifting={true} />
+      <Tab.Screen
+        name="Transação"
+        component={AddTransaction}
+        shifting={true}
+        options={{
+          tabBarIcon: ({ color }: { color: string }) => (
+            <Ionicons name="cash-outline" color={color} size={24} />
+          ),
+        }}
+      />
       <Tab.Screen
         name="Graficos"
         component={MonthlySummary}

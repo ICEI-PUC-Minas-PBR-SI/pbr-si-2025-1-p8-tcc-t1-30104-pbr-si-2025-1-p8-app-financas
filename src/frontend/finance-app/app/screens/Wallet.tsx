@@ -1,48 +1,70 @@
-import React, { useState } from 'react'
-import { View, Text, ScrollView, StyleSheet } from 'react-native'
+import React, { useState, useEffect } from 'react'
+import {
+  View,
+  Text,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+} from 'react-native'
 import { WalletCard } from '../components/wallet/WalletCard'
 import { TransactionItem } from '../components/wallet/TransactionItem'
 import ChatButton from '../components/chat/ChatButton'
 import ChatModal from '../components/chat/chatModal'
 import colors from '../utils/colors'
+import { getRequest } from '../services/apiServices'
+import { useAuth } from '../context/AuthContext'
+import { Transaction, TransactionSummary } from '../services/types'
+import { useNavigation, useFocusEffect } from '@react-navigation/native'
 
 export const Wallet: React.FC = () => {
-  const [chatVisible, setChatVisible] = useState(false)
+  const { userId } = useAuth()
 
-  const transactions = [
-    { title: 'Salário (Fixo)', date: 'Sexta-feira 28/4/2023', value: 1500 },
-    { title: 'Casa (Sabonete)', date: 'Sexta-feira 28/4/2023', value: -4 },
-    { title: 'Casa (Detergente)', date: 'Sexta-feira 28/4/2023', value: -12 },
-    {
-      title: 'Transporte (Passagem de avião)',
-      date: 'Quarta-feira 19/4/2023',
-      value: -480,
-    },
-    {
-      title: 'Investimentos (Fundo imobiliário)',
-      date: 'Sábado 22/4/2023',
-      value: -600,
-    },
-  ]
+  const [chatVisible, setChatVisible] = useState(false)
+  const [transactions, setTransactions] = useState<Transaction[]>([])
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchTransactions = async () => {
+        try {
+          const data: TransactionSummary = await getRequest(
+            `transaction/summary/${userId}`,
+          )
+          setTransactions(data.transactions)
+        } catch (error) {
+          console.error('Erro ao buscar transações:', error)
+        }
+      }
+
+      fetchTransactions()
+
+      return () => {}
+    }, [userId]),
+  )
 
   const income = transactions
-    .filter(t => t.value > 0)
-    .reduce((acc, t) => acc + t.value, 0)
+    .filter(t => t.type == 'entrada')
+    .reduce((acc, t) => acc + t.amount, 0)
+
   const expense = transactions
-    .filter(t => t.value < 0)
-    .reduce((acc, t) => acc + t.value, 0)
-  const balance = income + expense
+    .filter(t => t.type == 'saida')
+    .reduce((acc, t) => acc + t.amount, 0)
+
+  const balance = income - expense
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>Meu bolso</Text>
       </View>
-      <WalletCard
-        balance={balance}
-        income={income}
-        expense={Math.abs(expense)}
-      />
+
+      <View style={styles.cardWrapper}>
+        <WalletCard
+          balance={balance}
+          income={income}
+          expense={Math.abs(expense)}
+        />
+      </View>
+
       <Text style={styles.historyTitle}>Histórico</Text>
       <ScrollView>
         {transactions.map((t, i) => (
@@ -50,7 +72,8 @@ export const Wallet: React.FC = () => {
             key={i}
             title={t.title}
             date={t.date}
-            value={t.value}
+            value={t.amount}
+            type={t.type}
           />
         ))}
       </ScrollView>
@@ -66,27 +89,33 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   header: {
-    backgroundColor: colors.primary,
-    paddingTop: 50,
-    paddingBottom: 20,
-    paddingHorizontal: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 200,
+    backgroundColor: colors.primaryBackground,
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
-    overflow: 'hidden',
+    zIndex: 0,
   },
-  title: {
-    color: '#fff',
-    fontSize: 34,
-    fontWeight: 'bold',
+  cardWrapper: {
+    marginTop: 100,
+    zIndex: 1,
+    paddingHorizontal: 16,
   },
   historyTitle: {
     fontSize: 18,
     marginLeft: 16,
     marginVertical: 8,
     fontWeight: 'bold',
+  },
+  title: {
+    color: '#fff',
+    fontSize: 34,
+    fontWeight: 'bold',
+    marginTop: 40,
+    marginLeft: 16,
   },
 })
 

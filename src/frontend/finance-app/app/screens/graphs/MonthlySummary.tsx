@@ -1,12 +1,37 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { View, Text, StyleSheet, ScrollView } from 'react-native'
 import { Header } from '../../components/Header'
 import { PieChart } from 'react-native-chart-kit'
 import { Dimensions } from 'react-native'
+import { useAuth } from '../../context/AuthContext'
+import { useFocusEffect } from '@react-navigation/native'
+import { getRequest } from '../../services/apiServices'
+import { formatCurrency } from '../../utils/format'
 
 const screenWidth = Dimensions.get('window').width
 
 export const MonthlySummary = () => {
+  const { userId } = useAuth()
+  const [info, setInfo] = useState(undefined)
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchTransactions = async () => {
+        try {
+          const data: any = await getRequest(`graphs/summary/${userId}`)
+          setInfo(data)
+          console.log(data)
+        } catch (error) {
+          console.error('Erro ao buscar transações:', error)
+        }
+      }
+
+      fetchTransactions()
+
+      return () => {}
+    }, [userId]),
+  )
+
   const data = [
     {
       name: 'Receitas',
@@ -40,7 +65,9 @@ export const MonthlySummary = () => {
             }}
           />
           <Text style={styles.label}>Receitas</Text>
-          <Text style={styles.valueGreen}>R$15.400,00</Text>
+          <Text style={styles.valueGreen}>
+            R$ {info?.totalIncome ?? '00,00'}
+          </Text>
         </View>
         <View style={styles.overviewItem}>
           <View
@@ -52,19 +79,9 @@ export const MonthlySummary = () => {
             }}
           />
           <Text style={styles.label}>Despesas</Text>
-          <Text style={styles.valueRed}>R$5.883,50</Text>
-        </View>
-        <View style={styles.overviewItem}>
-          <View
-            style={{
-              width: 12,
-              height: 12,
-              borderRadius: 6,
-              backgroundColor: '#006666',
-            }}
-          />
-          <Text style={styles.label}>Cartões de crédito</Text>
-          <Text style={styles.valueRed}>R$600,00</Text>
+          <Text style={styles.valueRed}>
+            R$ {info?.totalExpense ?? '00,00'}
+          </Text>
         </View>
 
         <Text style={styles.sectionTitle}>Resumo</Text>

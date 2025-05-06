@@ -34,7 +34,7 @@ export default function Login() {
     <View style={styles.container}>
       <View style={styles.logoContainer}>
         <Text style={styles.logoText}>
-          Finance<Text style={{ color: colors.black }}>App</Text>
+          Gestão no<Text style={{ color: colors.black }}> Bolso</Text>
         </Text>
       </View>
       <Formik

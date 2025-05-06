@@ -1,130 +1,233 @@
-import React, { useState } from 'react'
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
-import { useNavigation } from '@react-navigation/native'
-import Ionicons from 'react-native-vector-icons/Ionicons'
+import React, { useEffect, useState } from 'react'
+import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native'
+import { useNavigation, useFocusEffect } from '@react-navigation/native'
 import DropDownPicker from 'react-native-dropdown-picker'
-import { TextInput as PaperInput } from 'react-native-paper'
-import { DatePickerModal } from 'react-native-paper-dates'
-import { Header } from '../components/Header'
+import { TextInput as PaperInput, TextInput } from 'react-native-paper'
+import { DatePickerInput, DatePickerModal } from 'react-native-paper-dates'
+import { useAuth } from '../context/AuthContext'
+import { getRequest } from '../services/apiServices'
+import { Category } from '../services/types'
+import colors from '../utils/colors'
+import { Formik } from 'formik'
+import * as Yup from 'yup'
+import CustomTextInput from '../components/formik/CustomTextInput2'
+import { formatCurrency, formatMoney, formatDateBR } from '../utils/format'
+import { postRequest } from '../services/apiServices'
 
 export const AddTransaction = () => {
+  const { userId } = useAuth()
   const navigation = useNavigation()
+  const [categories, setCategories] = useState<Category[]>([])
+  const [categoryOpen, setCategoryOpen] = useState(false)
+  const [typeOpen, setTypeOpen] = useState(false)
+  const [inputDate, setInputDate] = React.useState<Date | undefined>(undefined)
 
-  const [categoria, setCategoria] = useState(null)
-  const [tipo, setTipo] = useState(null)
-  const [detalhes, setDetalhes] = useState('')
-  const [valor, setValor] = useState('')
-  const [data, setData] = useState(new Date())
-  const [showDatePicker, setShowDatePicker] = useState(false)
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const data: Category[] = await getRequest(`category/byuser/${userId}`)
+        setCategories(data)
+      } catch (error) {
+        console.error('Error fetching categories:', error)
+      }
+    }
 
-  const [categoriaOpen, setCategoriaOpen] = useState(false)
-  const [tipoOpen, setTipoOpen] = useState(false)
+    fetchCategories()
+  }, [userId])
 
-  const categorias = [
-    { label: 'Alimentação', value: 'alimentacao' },
-    { label: 'Transporte', value: 'transporte' },
-    { label: 'Lazer', value: 'lazer' },
-  ]
-
-  const tipos = [
+  const types = [
     { label: 'Entrada', value: 'entrada' },
     { label: 'Saída', value: 'saida' },
   ]
 
-  const handleSalvar = () => {
-    console.log({ categoria, detalhes, valor, tipo, data })
+  const validationSchema = Yup.object().shape({
+    categoryId: Yup.number().required('Categoria é obrigatório'),
+    type: Yup.string().required('Tipo é obrigatório'),
+    title: Yup.string().required('Título é obrigatório'),
+    amount: Yup.string()
+      .matches(/^\d+(\.\d{1,2})?$/, 'Valor inválido')
+      .required('Valor é obrigatório'),
+    date: Yup.string().required('Data é obrigatória'),
+  })
+
+  const handleCreate = async (values: any, resetForm: Function) => {
+    const payload = {
+      userId,
+      categoryId: values.categoryId,
+      type: values.type,
+      title: values.title,
+      amount: parseFloat(formatMoney(values.amount)),
+      date: formatDateBR(values.date),
+    }
+    try {
+      await postRequest(`transaction`, payload)
+      Alert.alert('Sucesso', 'Transação criada com sucesso!', [
+        {
+          text: 'OK',
+          onPress: () => {
+            resetForm()
+            setInputDate(undefined)
+            navigation.goBack()
+          },
+        },
+      ])
+    } catch (error: any) {
+      Alert.alert('Erro', error.message || 'Erro ao criar nova Transação.')
+      console.error(error)
+    }
   }
 
   return (
     <View style={styles.container}>
-      <Header title="Adicionar" showAttachment />
+      <View style={styles.header}>
+        <Text style={styles.title}>Criar nova transação</Text>
+      </View>
 
-      <View style={styles.card}>
-        <DropDownPicker
-          open={categoriaOpen}
-          value={categoria}
-          items={categorias}
-          setOpen={setCategoriaOpen}
-          setValue={setCategoria}
-          placeholder="Categoria"
-          style={styles.dropdown}
-          dropDownContainerStyle={{ borderRadius: 8 }}
-        />
-        <TouchableOpacity
-          style={styles.saveButton}
-          onPress={() => navigation.navigate('NewCategory')}
-        ></TouchableOpacity>
-
-        <PaperInput
-          label="Detalhes"
-          value={detalhes}
-          mode="outlined"
-          onChangeText={setDetalhes}
-          style={styles.input}
-        />
-
-        <PaperInput
-          label="Valor"
-          value={valor}
-          onChangeText={setValor}
-          keyboardType="numeric"
-          mode="outlined"
-          style={styles.input}
-        />
-
-        <DropDownPicker
-          open={tipoOpen}
-          value={tipo}
-          items={tipos}
-          setOpen={setTipoOpen}
-          setValue={setTipo}
-          placeholder="Tipo"
-          style={styles.dropdown}
-          dropDownContainerStyle={{ borderRadius: 8 }}
-        />
-
-        <TouchableOpacity
-          style={styles.dateButton}
-          onPress={() => setShowDatePicker(true)}
-        >
-          <Text style={styles.dateText}>
-            Data: {data.getDate()} / {data.getMonth() + 1} /{' '}
-            {data.getFullYear()}
-          </Text>
-          <Ionicons name="calendar-outline" size={20} color="#333" />
-        </TouchableOpacity>
-
-        <DatePickerModal
-          locale="pt"
-          mode="single"
-          visible={showDatePicker}
-          date={data}
-          onConfirm={({ date }) => {
-            setShowDatePicker(false)
-            if (date) setData(date)
+      <View style={styles.cardWrapper}>
+        <Formik
+          initialValues={{
+            categoryId: null,
+            type: '',
+            title: '',
+            amount: '',
+            date: undefined,
           }}
-          onDismiss={() => setShowDatePicker(false)}
-        />
+          validationSchema={validationSchema}
+          onSubmit={(values, { resetForm }) => handleCreate(values, resetForm)}
+        >
+          {({
+            handleChange,
+            handleBlur,
+            handleSubmit,
+            setFieldValue,
+            values,
+            errors,
+            touched,
+            resetForm,
+          }) => {
+            useFocusEffect(
+              React.useCallback(() => {
+                return () => {
+                  resetForm()
+                  setInputDate(undefined)
+                }
+              }, []),
+            )
 
-        <TouchableOpacity style={styles.saveButton} onPress={handleSalvar}>
-          <Text style={styles.saveText}>Salvar</Text>
-        </TouchableOpacity>
+            return (
+              <View style={styles.card}>
+                <DropDownPicker
+                  open={categoryOpen}
+                  value={values.categoryId}
+                  items={categories.map(c => ({
+                    label: c.name,
+                    value: c.id,
+                  }))}
+                  setOpen={setCategoryOpen}
+                  setValue={val => setFieldValue('categoryId', val())}
+                  placeholder="Selecione a categoria"
+                  style={styles.dropdown}
+                  dropDownContainerStyle={{ borderRadius: 8 }}
+                  zIndex={3000}
+                />
+                {touched.categoryId && errors.categoryId && (
+                  <Text style={{ color: 'red' }}>{errors.categoryId}</Text>
+                )}
+
+                <CustomTextInput
+                  label="Título"
+                  value={values.title}
+                  onChangeText={handleChange('title')}
+                />
+                {touched.title && errors.title && (
+                  <Text style={{ color: 'red' }}>{errors.title}</Text>
+                )}
+
+                <TextInput
+                  label="Valor"
+                  value={formatCurrency(values.amount)}
+                  onChangeText={text => {
+                    const numericValue = text.replace(/[^\d]/g, '')
+                    handleChange('amount')(numericValue)
+                  }}
+                  style={[styles.input]}
+                  mode="outlined"
+                  outlineColor="#ccc"
+                  activeOutlineColor="#007BFF"
+                  keyboardType="numeric"
+                />
+
+                {touched.amount && errors.amount && (
+                  <Text style={{ color: 'red' }}>{errors.amount}</Text>
+                )}
+
+                <DropDownPicker
+                  open={typeOpen}
+                  value={values.type}
+                  items={types}
+                  setOpen={setTypeOpen}
+                  setValue={val => setFieldValue('type', val())}
+                  placeholder="Selecione o tipo"
+                  style={styles.dropdown}
+                  dropDownContainerStyle={{ borderRadius: 8 }}
+                  zIndex={2000}
+                />
+                {touched.type && errors.type && (
+                  <Text style={{ color: 'red' }}>{errors.type}</Text>
+                )}
+
+                <View style={{ marginTop: 20, marginBottom: 20 }}>
+                  <DatePickerInput
+                    locale="pt"
+                    label="Escolha uma data"
+                    value={values.date}
+                    onChange={d => {
+                      setInputDate(d)
+                      setFieldValue('date', d)
+                    }}
+                    inputMode="end"
+                    style={[
+                      styles.input,
+                      { borderWidth: 1, borderColor: '#ccc', borderRadius: 5 },
+                    ]}
+                  />
+                </View>
+                {touched.date && errors.date && (
+                  <Text style={{ color: 'red' }}>{errors.date}</Text>
+                )}
+
+                <TouchableOpacity
+                  style={styles.saveButton}
+                  onPress={() => handleSubmit()}
+                >
+                  <Text style={styles.saveText}>Salvar</Text>
+                </TouchableOpacity>
+              </View>
+            )
+          }}
+        </Formik>
       </View>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f1f1f1' },
+  container: { flex: 1, backgroundColor: '#fff' },
   header: {
-    backgroundColor: '#2c8f8f',
-    paddingTop: 50,
-    paddingBottom: 20,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 200,
+    backgroundColor: colors.primaryBackground,
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    zIndex: 0,
+  },
+  cardWrapper: {
+    marginTop: 120,
+    zIndex: 1,
     paddingHorizontal: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 10,
   },
   headerTitle: {
     color: '#fff',
@@ -141,7 +244,12 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   input: {
+    marginTop: 5,
+    marginBottom: 2,
     backgroundColor: '#fff',
+    borderRadius: 8,
+    height: 50,
+    borderBottomWidth: 0,
   },
   dropdown: {
     borderColor: '#ccc',
@@ -168,12 +276,19 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 8,
     alignItems: 'center',
-    marginTop: 8,
+    marginTop: 10,
   },
   saveText: {
     color: '#fff',
     fontWeight: '600',
     fontSize: 16,
+  },
+  title: {
+    color: '#fff',
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginTop: 50,
+    textAlign: 'center',
   },
 })
 

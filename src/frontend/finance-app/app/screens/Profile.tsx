@@ -12,6 +12,7 @@ import colors from '../utils/colors'
 import { useNavigation } from '@react-navigation/native'
 
 const options = [
+  { id: '0', icon: 'person-outline', label: 'Categorias' },
   { id: '1', icon: 'create-outline', label: 'Editar Perfil' },
   { id: '2', icon: 'settings-outline', label: 'Configurações' },
   { id: '3', icon: 'help-circle-outline', label: 'Ajuda' },
@@ -26,6 +27,10 @@ export const Profile = () => {
     switch (label) {
       case 'Sair':
         onLogout?.()
+        break
+
+      case 'Categorias':
+        navigation.navigate('Categories')
         break
 
       case 'Editar Perfil':

@@ -1,5 +1,6 @@
 import React from 'react'
 import { View, Text, StyleSheet } from 'react-native'
+import Icon from 'react-native-vector-icons/Feather'
 import colors from '../../utils/colors'
 
 interface WalletCardProps {
@@ -16,10 +17,26 @@ export const WalletCard: React.FC<WalletCardProps> = ({
   return (
     <View style={styles.card}>
       <Text style={styles.title}>Bolso</Text>
-      <Text style={styles.balance}>R$ {balance}</Text>
+      <Text style={styles.balance}>R$ {balance.toFixed(2)}</Text>
       <View style={styles.row}>
-        <Text style={styles.income}>↑ Entrada R$ {income}</Text>
-        <Text style={styles.expense}>↓ Saída R$ {expense}</Text>
+        <View style={styles.columnLeft}>
+          <View style={styles.iconRow}>
+            <Icon name="arrow-up-circle" size={18} color={colors.greenLight} />
+            <Text style={styles.label}> Entrada</Text>
+          </View>
+          <Text style={[styles.amount, { color: colors.greenLight }]}>
+            R$ {income.toFixed(2)}
+          </Text>
+        </View>
+        <View style={styles.columnRight}>
+          <View style={styles.iconRow}>
+            <Icon name="arrow-down-circle" size={18} color={colors.redLight} />
+            <Text style={styles.label}> Saída</Text>
+          </View>
+          <Text style={[styles.amount, { color: colors.redLight }]}>
+            R$ {expense.toFixed(2)}
+          </Text>
+        </View>
       </View>
     </View>
   )
@@ -27,7 +44,7 @@ export const WalletCard: React.FC<WalletCardProps> = ({
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: colors.primary,
+    backgroundColor: colors.secondaryBackground,
     borderRadius: 12,
     padding: 16,
     margin: 16,
@@ -46,13 +63,32 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    marginTop: 8,
   },
-  income: {
-    color: colors.greenLight,
-    fontWeight: 'bold',
+  column: {
+    flex: 1,
+    alignItems: 'flex-start',
   },
-  expense: {
-    color: colors.redLight,
+  iconRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  label: {
+    color: colors.white,
+    fontSize: 14,
+    marginLeft: 4,
+  },
+  amount: {
     fontWeight: 'bold',
+    fontSize: 16,
+    marginTop: 4,
+  },
+  columnLeft: {
+    flex: 1,
+    alignItems: 'flex-start',
+  },
+  columnRight: {
+    flex: 1,
+    alignItems: 'flex-end',
   },
 })

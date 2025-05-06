@@ -27,29 +27,27 @@ export const Header: React.FC<HeaderProps> = ({
         <View style={{ width: 24 }} />
       )}
       <Text style={styles.title}>{title}</Text>
-      {showAttachment ? (
-        <Ionicons name="attach" size={24} color={colors.white} />
-      ) : (
-        <View style={{ width: 24 }} />
-      )}
     </View>
   )
 }
 
 const styles = StyleSheet.create({
   header: {
-    backgroundColor: colors.primary,
-    paddingTop: 50,
+    backgroundColor: colors.primaryBackground,
+    paddingTop: 40,
     paddingBottom: 20,
     paddingHorizontal: 16,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     marginBottom: 15,
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    overflow: 'hidden',
   },
   title: {
     color: colors.white,
-    fontSize: 16,
-    fontWeight: '600',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 })

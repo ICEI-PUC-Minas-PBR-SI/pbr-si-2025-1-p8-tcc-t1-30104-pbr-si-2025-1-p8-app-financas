@@ -1,24 +1,32 @@
 import React from 'react'
 import { View, Text, StyleSheet } from 'react-native'
+import Icon from 'react-native-vector-icons/Feather'
+import { formatDateBR } from '../../utils/format'
+import colors from '../../utils/colors'
 
 interface TransactionItemProps {
   title: string
   date: string
   value: number
+  type: 'entrada' | 'saida'
 }
 
 export const TransactionItem: React.FC<TransactionItemProps> = ({
   title,
   date,
   value,
+  type,
 }) => {
-  const isIncome = value > 0
+  const isIncome = type === 'entrada'
 
   return (
     <View style={styles.item}>
-      <Text style={isIncome ? styles.incomeIcon : styles.expenseIcon}>
-        {isIncome ? '🟢' : '🔴'}
-      </Text>
+      <Icon
+        name={isIncome ? 'arrow-up-circle' : 'arrow-down-circle'}
+        size={26}
+        color={isIncome ? colors.greenLight : 'red'}
+        style={styles.icon}
+      />
       <View style={styles.details}>
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.date}>{date}</Text>
@@ -38,12 +46,7 @@ const styles = StyleSheet.create({
     borderBottomColor: '#eee',
     borderBottomWidth: 1,
   },
-  incomeIcon: {
-    fontSize: 20,
-    marginRight: 10,
-  },
-  expenseIcon: {
-    fontSize: 20,
+  icon: {
     marginRight: 10,
   },
   details: {
@@ -51,12 +54,14 @@ const styles = StyleSheet.create({
   },
   title: {
     fontWeight: 'bold',
+    fontSize: 16,
   },
   date: {
-    fontSize: 12,
+    fontSize: 14,
     color: '#888',
   },
   value: {
     fontWeight: 'bold',
+    fontSize: 16,
   },
 })
