@@ -59,6 +59,7 @@ export const AddTransaction = () => {
       amount: parseFloat(formatMoney(values.amount)),
       date: formatDateBR(values.date),
     }
+
     try {
       await postRequest(`transaction`, payload)
       Alert.alert('Sucesso', 'Transação criada com sucesso!', [
@@ -110,6 +111,8 @@ export const AddTransaction = () => {
                 return () => {
                   resetForm()
                   setInputDate(undefined)
+                  setTypeOpen(false)
+                  setCategoryOpen(false)
                 }
               }, []),
             )
@@ -129,6 +132,9 @@ export const AddTransaction = () => {
                   style={styles.dropdown}
                   dropDownContainerStyle={{ borderRadius: 8 }}
                   zIndex={3000}
+                  translation={{
+                    NOTHING_TO_SHOW: 'Nenhuma categoria foi encontrada',
+                  }}
                 />
                 {touched.categoryId && errors.categoryId && (
                   <Text style={{ color: 'red' }}>{errors.categoryId}</Text>

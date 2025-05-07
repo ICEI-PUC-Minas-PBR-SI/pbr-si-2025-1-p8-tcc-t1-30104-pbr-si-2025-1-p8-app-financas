@@ -1,56 +1,110 @@
-import React from 'react'
+import React, { useRef } from 'react'
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
+import { Animated, Dimensions } from 'react-native'
+import Ionicons from 'react-native-vector-icons/Ionicons'
+import { useFocusEffect } from '@react-navigation/native'
 import Wallet from '../screens/Wallet'
 import AddTransaction from '../screens/AddTransaction'
 import MonthlySummary from '../screens/graphs/MonthlySummary'
-import Ionicons from 'react-native-vector-icons/Ionicons'
-import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs'
-import { ProfileStack } from './authStack.routes'
-import { WalletStack } from './authStack.routes'
+import { ProfileStack, WalletStack } from './authStack.routes'
+const { width } = Dimensions.get('window')
 
-const Tab = createMaterialBottomTabNavigator()
+const Tab = createBottomTabNavigator()
+
+const SlideFadeWrapper = ({ children }: { children: React.ReactNode }) => {
+  const translateY = useRef(new Animated.Value(20)).current
+  const opacity = useRef(new Animated.Value(0)).current
+
+  useFocusEffect(
+    React.useCallback(() => {
+      translateY.setValue(20)
+      opacity.setValue(0)
+
+      Animated.parallel([
+        Animated.timing(translateY, {
+          toValue: 0,
+          duration: 1500,
+          useNativeDriver: true,
+        }),
+        Animated.timing(opacity, {
+          toValue: 1,
+          duration: 0,
+          useNativeDriver: true,
+        }),
+      ]).start()
+    }, [translateY, opacity]),
+  )
+
+  return (
+    <Animated.View
+      style={{
+        flex: 1,
+        transform: [{ translateY }],
+        opacity,
+      }}
+    >
+      {children}
+    </Animated.View>
+  )
+}
+
+const withSlideFade = (Component: React.ComponentType<any>) => (props: any) =>
+  (
+    <SlideFadeWrapper>
+      <Component {...props} />
+    </SlideFadeWrapper>
+  )
 
 export const TabRoutes = () => {
   return (
-    <Tab.Navigator screenOptions={{ headerShown: false }}>
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        headerShown: false,
+        tabBarIcon: ({ color, size }) => {
+          let iconName = ''
+
+          switch (route.name) {
+            case 'Carteira':
+              iconName = 'wallet-outline'
+              break
+            case 'Transação':
+              iconName = 'cash-outline'
+              break
+            case 'Gráficos':
+              iconName = 'bar-chart-outline'
+              break
+            case 'Perfil':
+              iconName = 'person-outline'
+              break
+            default:
+              iconName = 'help-outline'
+          }
+
+          return <Ionicons name={iconName} size={size} color={color} />
+        },
+        tabBarActiveTintColor: '#007aff',
+        tabBarInactiveTintColor: 'gray',
+      })}
+    >
       <Tab.Screen
         name="Carteira"
-        component={WalletStack}
-        options={{
-          tabBarIcon: ({ color }: { color: string }) => (
-            <Ionicons name="wallet-outline" color={color} size={24} />
-          ),
-        }}
+        component={withSlideFade(WalletStack)}
+        options={{ unmountOnBlur: true }}
       />
-      <Tab.Screen name="Investimentos" component={Wallet} shifting={true} />
       <Tab.Screen
         name="Transação"
-        component={AddTransaction}
-        shifting={true}
-        options={{
-          tabBarIcon: ({ color }: { color: string }) => (
-            <Ionicons name="cash-outline" color={color} size={24} />
-          ),
-        }}
+        component={withSlideFade(AddTransaction)}
+        options={{ unmountOnBlur: true }}
       />
       <Tab.Screen
-        name="Graficos"
-        component={MonthlySummary}
-        shifting={true}
-        options={{
-          tabBarIcon: ({ color }: { color: string }) => (
-            <Ionicons name="bar-chart-outline" color={color} size={24} />
-          ),
-        }}
+        name="Gráficos"
+        component={withSlideFade(MonthlySummary)}
+        options={{ unmountOnBlur: true }}
       />
       <Tab.Screen
-        name="Profile"
-        component={ProfileStack}
-        shifting={true}
-        options={{
-          tabBarIcon: ({ color }: { color: string }) => (
-            <Ionicons name="person-outline" color={color} size={24} />
-          ),
-        }}
+        name="Perfil"
+        component={withSlideFade(ProfileStack)}
+        options={{ unmountOnBlur: true }}
       />
     </Tab.Navigator>
   )

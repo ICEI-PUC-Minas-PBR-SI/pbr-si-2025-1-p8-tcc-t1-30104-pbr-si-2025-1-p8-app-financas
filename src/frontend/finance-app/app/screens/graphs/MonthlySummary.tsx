@@ -20,7 +20,6 @@ export const MonthlySummary = () => {
         try {
           const data: any = await getRequest(`graphs/summary/${userId}`)
           setInfo(data)
-          console.log(data)
         } catch (error) {
           console.error('Erro ao buscar transações:', error)
         }
@@ -66,7 +65,7 @@ export const MonthlySummary = () => {
           />
           <Text style={styles.label}>Receitas</Text>
           <Text style={styles.valueGreen}>
-            R$ {info?.totalIncome ?? '00,00'}
+            R$ {info?.totalIncome != '0' ? info?.totalIncome : '00,00'}
           </Text>
         </View>
         <View style={styles.overviewItem}>
@@ -80,7 +79,7 @@ export const MonthlySummary = () => {
           />
           <Text style={styles.label}>Despesas</Text>
           <Text style={styles.valueRed}>
-            R$ {info?.totalExpense ?? '00,00'}
+            R$ {info?.totalExpense != '0' ? info?.totalExpense : '00,00'}
           </Text>
         </View>
 

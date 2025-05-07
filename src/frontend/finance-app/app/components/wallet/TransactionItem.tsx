@@ -16,6 +16,7 @@ export const TransactionItem: React.FC<TransactionItemProps> = ({
   date,
   value,
   type,
+  categoryName,
 }) => {
   const isIncome = type === 'entrada'
 
@@ -29,6 +30,9 @@ export const TransactionItem: React.FC<TransactionItemProps> = ({
       />
       <View style={styles.details}>
         <Text style={styles.title}>{title}</Text>
+        <Text style={{ color: colors.textSecondary, fontSize: 12 }}>
+          {categoryName}{' '}
+        </Text>
         <Text style={styles.date}>{date}</Text>
       </View>
       <Text style={[styles.value, { color: isIncome ? 'green' : 'red' }]}>
@@ -57,8 +61,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   date: {
-    fontSize: 14,
+    fontSize: 12,
     color: '#888',
+    fontWeight: 'bold',
   },
   value: {
     fontWeight: 'bold',

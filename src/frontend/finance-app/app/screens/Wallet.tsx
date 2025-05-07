@@ -40,7 +40,7 @@ export const Wallet: React.FC = () => {
       return () => {}
     }, [userId]),
   )
-
+  console.log(transactions)
   const income = transactions
     .filter(t => t.type == 'entrada')
     .reduce((acc, t) => acc + t.amount, 0)
@@ -74,6 +74,7 @@ export const Wallet: React.FC = () => {
             date={t.date}
             value={t.amount}
             type={t.type}
+            categoryName={t?.categoryName}
           />
         ))}
       </ScrollView>

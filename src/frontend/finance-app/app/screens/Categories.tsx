@@ -8,7 +8,7 @@ import {
   Alert,
   ScrollView,
 } from 'react-native'
-import { useNavigation } from '@react-navigation/native'
+import { useNavigation, useFocusEffect } from '@react-navigation/native'
 import { Header } from '../components/Header'
 import { AppTextInput } from '../components/AppTextInput'
 import { Formik } from 'formik'
@@ -18,31 +18,51 @@ import { getRequest } from '../services/apiServices'
 import { Category } from '../services/types'
 import { useAuth } from '../context/AuthContext'
 import colors from '../utils/colors'
+import { postRequest } from '../services/apiServices'
 
 export const Categories = () => {
   const { userId } = useAuth()
   const [categories, setCategories] = useState<Category[]>([])
   const navigation = useNavigation()
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const data: Category[] = await getRequest(`category/byuser/${userId}`)
-        setCategories(data)
-      } catch (error) {
-        console.error('Erro ao buscar transações:', error)
-      }
-    }
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchCategories()
 
+      return () => {}
+    }, [userId]),
+  )
+
+  const fetchCategories = async () => {
+    try {
+      const data: Category[] = await getRequest(`category/byuser/${userId}`)
+      setCategories(data)
+    } catch (error) {
+      console.error('Erro ao buscar categorias:', error)
+    }
+  }
+
+  useEffect(() => {
     fetchCategories()
   }, [userId])
 
-  const handleReset = () => {
-    setCategories([])
-  }
-
   const handleSave = (values: { category: string }, { resetForm }: any) => {
-    setCategories([...categories, values.category])
+    try {
+      postRequest('category', { name: values.category, userId })
+      Alert.alert('Sucesso', 'Transação criada com sucesso!', [
+        {
+          text: 'OK',
+          onPress: () => {
+            fetchCategories()
+            resetForm()
+          },
+        },
+      ])
+    } catch (error: any) {
+      Alert.alert('Erro', error.message || 'Erro ao criar nova Transação.')
+      console.error(error)
+    }
+
     resetForm()
   }
 

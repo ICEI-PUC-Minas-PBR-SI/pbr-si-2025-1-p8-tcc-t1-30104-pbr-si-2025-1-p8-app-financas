@@ -6,6 +6,7 @@ export interface Transaction {
   title: string
   amount: number
   date: string
+  categoryName?: string
   createdAt?: string
   updatedAt?: string
 }

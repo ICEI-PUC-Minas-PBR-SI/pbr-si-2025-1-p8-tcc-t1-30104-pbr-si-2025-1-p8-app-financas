@@ -62,11 +62,7 @@ export const Profile = () => {
 
   return (
     <View style={styles.container}>
-      <Ionicons
-        name="person-circle-outline"
-        size={100}
-        color={colors.primary}
-      />
+      <Ionicons name="person-circle-outline" size={100} color={colors.black} />
       <Text style={styles.title}>{userInfo?.name}</Text>
 
       <FlatList
@@ -89,7 +85,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: colors.primary,
+    color: colors.black,
     marginVertical: 20,
   },
   optionsList: {

@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   logoText: {
-    fontSize: 50,
+    fontSize: 45,
     fontWeight: 'bold',
     color: colors.primary,
     textAlign: 'center',
