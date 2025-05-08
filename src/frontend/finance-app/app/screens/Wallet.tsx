@@ -40,7 +40,7 @@ export const Wallet: React.FC = () => {
       return () => {}
     }, [userId]),
   )
-  console.log(transactions)
+
   const income = transactions
     .filter(t => t.type == 'entrada')
     .reduce((acc, t) => acc + t.amount, 0)
@@ -66,6 +66,15 @@ export const Wallet: React.FC = () => {
       </View>
 
       <Text style={styles.historyTitle}>Histórico</Text>
+
+      {transactions.length === 0 && (
+        <View style={{ alignItems: 'center', marginTop: 20 }}>
+          <Text style={{ fontSize: 16, color: colors.gray }}>
+            Nenhuma transação encontrada.
+          </Text>
+        </View>
+      )}
+
       <ScrollView>
         {transactions.map((t, i) => (
           <TransactionItem

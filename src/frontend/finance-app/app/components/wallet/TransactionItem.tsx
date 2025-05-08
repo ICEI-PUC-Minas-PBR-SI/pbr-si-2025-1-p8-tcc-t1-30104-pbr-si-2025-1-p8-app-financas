@@ -1,13 +1,14 @@
 import React from 'react'
 import { View, Text, StyleSheet } from 'react-native'
 import Icon from 'react-native-vector-icons/Feather'
-import { formatDateBR } from '../../utils/format'
+import { formatDateBR, formatCurrency } from '../../utils/format'
 import colors from '../../utils/colors'
 
 interface TransactionItemProps {
   title: string
   date: string
   value: number
+  categoryName?: string
   type: 'entrada' | 'saida'
 }
 
@@ -25,7 +26,7 @@ export const TransactionItem: React.FC<TransactionItemProps> = ({
       <Icon
         name={isIncome ? 'arrow-up-circle' : 'arrow-down-circle'}
         size={26}
-        color={isIncome ? colors.greenLight : 'red'}
+        color={isIncome ? colors.greenLight : colors.error}
         style={styles.icon}
       />
       <View style={styles.details}>
@@ -35,8 +36,13 @@ export const TransactionItem: React.FC<TransactionItemProps> = ({
         </Text>
         <Text style={styles.date}>{date}</Text>
       </View>
-      <Text style={[styles.value, { color: isIncome ? 'green' : 'red' }]}>
-        {isIncome ? `+ R$ ${value}` : `- R$ ${Math.abs(value)}`}
+      <Text
+        style={[
+          styles.value,
+          { color: isIncome ? colors.success : colors.error },
+        ]}
+      >
+        {isIncome ? `+ R$ ${Math.abs(value)}` : `- R$ ${Math.abs(value)}`}
       </Text>
     </View>
   )

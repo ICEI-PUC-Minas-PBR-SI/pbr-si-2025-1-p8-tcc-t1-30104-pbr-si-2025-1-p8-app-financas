@@ -9,7 +9,7 @@ import CustomButton from '../../components/formik/CustomButton'
 import colors from '../../utils/colors'
 import { TextInput } from 'react-native-paper'
 import { useNavigation } from '@react-navigation/native'
-import { Alert } from 'react-native'
+import SuccessModal from '../../components/modals/SuccessModal'
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required('Nome completo é obrigatório'),
@@ -26,6 +26,7 @@ export default function Signup() {
   const { onRegister } = useAuth()
   const [secureText, setSecureText] = useState(true)
   const [secureTextConfirm, setSecureTextConfirm] = useState(true)
+  const [successModalVisible, setSuccessModalVisible] = useState(false)
   const navigation = useNavigation()
 
   const register = async (values: {
@@ -43,16 +44,7 @@ export default function Signup() {
       if (result && result.error) {
         alert(result.msg)
       } else {
-        Alert.alert(
-          'Cadastro realizado!',
-          'Seu cadastro foi concluído com sucesso.',
-          [
-            {
-              text: 'OK',
-              onPress: () => navigation.goBack(),
-            },
-          ],
-        )
+        setSuccessModalVisible(true)
       }
     } catch (e) {
       console.log(e)
@@ -154,6 +146,15 @@ export default function Signup() {
           </View>
         )}
       </Formik>
+
+      <SuccessModal
+        visible={successModalVisible}
+        message="Seu cadastro foi concluído com sucesso."
+        onClose={() => {
+          setSuccessModalVisible(false)
+          navigation.goBack()
+        }}
+      />
     </View>
   )
 }

@@ -6,13 +6,15 @@ import { Dimensions } from 'react-native'
 import { useAuth } from '../../context/AuthContext'
 import { useFocusEffect } from '@react-navigation/native'
 import { getRequest } from '../../services/apiServices'
-import { formatCurrency } from '../../utils/format'
+import colors from '../../utils/colors'
 
 const screenWidth = Dimensions.get('window').width
 
 export const MonthlySummary = () => {
   const { userId } = useAuth()
-  const [info, setInfo] = useState(undefined)
+  const [info, setInfo] = useState<
+    { totalIncome?: string; totalExpense?: string } | undefined
+  >(undefined)
 
   useFocusEffect(
     React.useCallback(() => {
@@ -50,7 +52,9 @@ export const MonthlySummary = () => {
 
   return (
     <View style={{ flex: 1 }}>
-      <Header title="Resumo Mensal" />
+      <View style={styles.header}>
+        <Text style={styles.title}>Resumo Mensal</Text>
+      </View>
 
       <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.sectionTitle}>Visão geral</Text>
@@ -130,6 +134,24 @@ const styles = StyleSheet.create({
   container: {
     padding: 16,
     backgroundColor: '#f1f1f1',
+  },
+  header: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 200,
+    backgroundColor: colors.primaryBackground,
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    zIndex: 0,
+  },
+  title: {
+    color: '#fff',
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginTop: 50,
+    textAlign: 'center',
   },
   sectionTitle: {
     fontSize: 18,

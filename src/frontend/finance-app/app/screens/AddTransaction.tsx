@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native'
 import { useNavigation, useFocusEffect } from '@react-navigation/native'
 import DropDownPicker from 'react-native-dropdown-picker'
-import { TextInput as PaperInput, TextInput } from 'react-native-paper'
-import { DatePickerInput, DatePickerModal } from 'react-native-paper-dates'
+import { TextInput } from 'react-native-paper'
+import { DatePickerInput } from 'react-native-paper-dates'
 import { useAuth } from '../context/AuthContext'
 import { getRequest } from '../services/apiServices'
 import { Category } from '../services/types'
@@ -13,42 +13,59 @@ import * as Yup from 'yup'
 import CustomTextInput from '../components/formik/CustomTextInput2'
 import { formatCurrency, formatMoney, formatDateBR } from '../utils/format'
 import { postRequest } from '../services/apiServices'
+import SuccessModal from '../components/modals/SuccessModal'
+import ErrorModal from '../components/modals/ErrorModal'
+
+const types = [
+  { label: 'Entrada', value: 'entrada' },
+  { label: 'Saída', value: 'saida' },
+]
+
+const validationSchema = Yup.object().shape({
+  categoryId: Yup.number().required('Categoria é obrigatório'),
+  type: Yup.string().required('Tipo é obrigatório'),
+  title: Yup.string().required('Título é obrigatório'),
+  amount: Yup.string()
+    .matches(/^\d+(\.\d{1,2})?$/, 'Valor inválido')
+    .required('Valor é obrigatório'),
+  date: Yup.string().required('Data é obrigatória'),
+})
 
 export const AddTransaction = () => {
   const { userId } = useAuth()
+  const formRef = useRef<any>(null)
   const navigation = useNavigation()
   const [categories, setCategories] = useState<Category[]>([])
   const [categoryOpen, setCategoryOpen] = useState(false)
   const [typeOpen, setTypeOpen] = useState(false)
-  const [inputDate, setInputDate] = React.useState<Date | undefined>(undefined)
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const data: Category[] = await getRequest(`category/byuser/${userId}`)
-        setCategories(data)
-      } catch (error) {
-        console.error('Error fetching categories:', error)
-      }
+  const [successModalVisible, setSuccessModalVisible] = useState(false)
+  const [successModalText, setSuccessModalText] = useState('')
+  const [errorModalText, setErrorModalText] = useState('')
+  const [errorModalVisible, setErrorModalVisible] = useState(false)
+
+  const fetchCategories = async () => {
+    try {
+      const data: Category[] = await getRequest(`category/byuser/${userId}`)
+      setCategories(data.filter(c => c.active))
+    } catch (error) {
+      console.error('Error fetching categories:', error)
     }
+  }
 
-    fetchCategories()
-  }, [userId])
+  useFocusEffect(
+    useCallback(() => {
+      fetchCategories()
+    }, []),
+  )
 
-  const types = [
-    { label: 'Entrada', value: 'entrada' },
-    { label: 'Saída', value: 'saida' },
-  ]
-
-  const validationSchema = Yup.object().shape({
-    categoryId: Yup.number().required('Categoria é obrigatório'),
-    type: Yup.string().required('Tipo é obrigatório'),
-    title: Yup.string().required('Título é obrigatório'),
-    amount: Yup.string()
-      .matches(/^\d+(\.\d{1,2})?$/, 'Valor inválido')
-      .required('Valor é obrigatório'),
-    date: Yup.string().required('Data é obrigatória'),
-  })
+  useFocusEffect(
+    useCallback(() => {
+      formRef.current?.resetForm()
+      setTypeOpen(false)
+      setCategoryOpen(false)
+    }, []),
+  )
 
   const handleCreate = async (values: any, resetForm: Function) => {
     const payload = {
@@ -62,19 +79,12 @@ export const AddTransaction = () => {
 
     try {
       await postRequest(`transaction`, payload)
-      Alert.alert('Sucesso', 'Transação criada com sucesso!', [
-        {
-          text: 'OK',
-          onPress: () => {
-            resetForm()
-            setInputDate(undefined)
-            navigation.goBack()
-          },
-        },
-      ])
+
+      setSuccessModalVisible(true)
+      setSuccessModalText('Transação criada com sucesso!')
     } catch (error: any) {
-      Alert.alert('Erro', error.message || 'Erro ao criar nova Transação.')
-      console.error(error)
+      setErrorModalVisible(true)
+      setErrorModalText(error.message || 'Erro ao criar nova Transação.')
     }
   }
 
@@ -93,6 +103,7 @@ export const AddTransaction = () => {
             amount: '',
             date: undefined,
           }}
+          innerRef={formRef}
           validationSchema={validationSchema}
           onSubmit={(values, { resetForm }) => handleCreate(values, resetForm)}
         >
@@ -106,17 +117,6 @@ export const AddTransaction = () => {
             touched,
             resetForm,
           }) => {
-            useFocusEffect(
-              React.useCallback(() => {
-                return () => {
-                  resetForm()
-                  setInputDate(undefined)
-                  setTypeOpen(false)
-                  setCategoryOpen(false)
-                }
-              }, []),
-            )
-
             return (
               <View style={styles.card}>
                 <DropDownPicker
@@ -188,7 +188,6 @@ export const AddTransaction = () => {
                     label="Escolha uma data"
                     value={values.date}
                     onChange={d => {
-                      setInputDate(d)
                       setFieldValue('date', d)
                     }}
                     inputMode="end"
@@ -213,6 +212,22 @@ export const AddTransaction = () => {
           }}
         </Formik>
       </View>
+      <SuccessModal
+        visible={successModalVisible}
+        message={successModalText}
+        onClose={() => {
+          setSuccessModalVisible(false)
+          formRef.current?.resetForm()
+          navigation.goBack()
+        }}
+      />
+      <ErrorModal
+        visible={errorModalVisible}
+        message={errorModalText}
+        onClose={() => {
+          setErrorModalVisible(false)
+        }}
+      />
     </View>
   )
 }

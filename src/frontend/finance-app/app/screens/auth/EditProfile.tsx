@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { View, Text, StyleSheet, Alert } from 'react-native'
 import { Formik } from 'formik'
 import * as Yup from 'yup'
@@ -9,6 +9,7 @@ import { useAuth } from '../../context/AuthContext'
 import colors from '../../utils/colors'
 import { useNavigation } from '@react-navigation/native'
 import { putRequest } from '../../services/apiServices'
+import SuccessModal from '../../components/modals/SuccessModal'
 
 const validationSchema = Yup.object().shape({
   name: Yup.string()
@@ -21,6 +22,7 @@ const validationSchema = Yup.object().shape({
 
 export default function EditProfile() {
   const { userInfo, userId, onLogout } = useAuth()
+  const [successModalVisible, setSuccessModalVisible] = useState(false)
   const navigation = useNavigation()
 
   const handleUpdate = async (values: { name: string }) => {
@@ -28,20 +30,7 @@ export default function EditProfile() {
       await putRequest<{ message: string }>(`users/edituser/${userId}`, {
         name: values.name,
       })
-
-      Alert.alert(
-        'Sucesso',
-        'Nome atualizado com sucesso! \n\nPara que a alteração seja aplicada é necessário realizar o login novamente!',
-        [
-          {
-            text: 'OK',
-            onPress: () => {
-              navigation.goBack()
-              onLogout?.()
-            },
-          },
-        ],
-      )
+      setSuccessModalVisible(true)
     } catch (error: any) {
       Alert.alert('Erro', error.message || 'Erro ao atualizar.')
       console.error(error)
@@ -88,6 +77,15 @@ export default function EditProfile() {
           </View>
         )}
       </Formik>
+
+      <SuccessModal
+        visible={successModalVisible}
+        message="Nome atualizado com sucesso! Para que a alteração seja aplicada é necessário realizar o login novamente!"
+        onClose={() => {
+          setSuccessModalVisible(false)
+          onLogout?.()
+        }}
+      />
     </View>
   )
 }

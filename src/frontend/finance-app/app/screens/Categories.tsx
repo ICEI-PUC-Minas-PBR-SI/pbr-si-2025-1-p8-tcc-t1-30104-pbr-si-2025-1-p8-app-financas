@@ -1,37 +1,45 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import {
   View,
   Text,
-  TouchableOpacity,
-  StyleSheet,
-  FlatList,
   Alert,
+  FlatList,
   ScrollView,
+  StyleSheet,
+  TouchableOpacity,
 } from 'react-native'
-import { useNavigation, useFocusEffect } from '@react-navigation/native'
-import { Header } from '../components/Header'
-import { AppTextInput } from '../components/AppTextInput'
+import { useFocusEffect } from '@react-navigation/native'
 import { Formik } from 'formik'
 import * as Yup from 'yup'
-import ErrorMessageFormik from '../components/formik/ErrorMessageFormik'
-import { getRequest } from '../services/apiServices'
-import { Category } from '../services/types'
-import { useAuth } from '../context/AuthContext'
 import colors from '../utils/colors'
-import { postRequest } from '../services/apiServices'
+import { useAuth } from '../context/AuthContext'
+import { getRequest, postRequest, putRequest } from '../services/apiServices'
+import { Category } from '../services/types'
+import { Header } from '../components/Header'
+import ErrorMessageFormik from '../components/formik/ErrorMessageFormik'
+import { CategoryItem } from '../components/category/CategoryItem'
+import { EditCategoryModal } from '../components/category/editCategoryModal'
+import ConfirmModal from '../components/modals/ConfirmModal'
+import CustomTextInput from '../components/formik/CustomTextInput2'
+import SuccessModal from '../components/modals/SuccessModal'
+import ErrorModal from '../components/modals/ErrorModal'
 
 export const Categories = () => {
   const { userId } = useAuth()
+  const formRef = useRef<any>(null)
   const [categories, setCategories] = useState<Category[]>([])
-  const navigation = useNavigation()
-
-  useFocusEffect(
-    React.useCallback(() => {
-      fetchCategories()
-
-      return () => {}
-    }, [userId]),
+  const [editingCategory, setEditingCategory] = useState<Category | null>(null)
+  const [newCategoryName, setNewCategoryName] = useState('')
+  const [modalVisible, setModalVisible] = useState(false)
+  const [confirmModalVisible, setConfirmModalVisible] = useState(false)
+  const [categoryToToggle, setCategoryToToggle] = useState<Category | null>(
+    null,
   )
+
+  const [successModalVisible, setSuccessModalVisible] = useState(false)
+  const [successModalText, setSuccessModalText] = useState('')
+  const [errorModalText, setErrorModalText] = useState('')
+  const [errorModalVisible, setErrorModalVisible] = useState(false)
 
   const fetchCategories = async () => {
     try {
@@ -42,48 +50,76 @@ export const Categories = () => {
     }
   }
 
-  useEffect(() => {
-    fetchCategories()
-  }, [userId])
+  useFocusEffect(
+    useCallback(() => {
+      fetchCategories()
+    }, []),
+  )
 
-  const handleSave = (values: { category: string }, { resetForm }: any) => {
+  useFocusEffect(
+    React.useCallback(() => {
+      formRef.current?.resetForm()
+    }, []),
+  )
+
+  const handleSave = async (
+    values: { category: string },
+    { resetForm }: any,
+  ) => {
     try {
-      postRequest('category', { name: values.category, userId })
-      Alert.alert('Sucesso', 'Transação criada com sucesso!', [
-        {
-          text: 'OK',
-          onPress: () => {
-            fetchCategories()
-            resetForm()
-          },
-        },
-      ])
+      await postRequest('category', { name: values.category, userId })
+      setSuccessModalVisible(true)
+      setSuccessModalText('Categoria criada com sucesso!')
+      resetForm()
+      fetchCategories()
     } catch (error: any) {
-      Alert.alert('Erro', error.message || 'Erro ao criar nova Transação.')
-      console.error(error)
+      setErrorModalText(error.message || 'Erro ao criar categoria')
+      setErrorModalVisible(true)
+    }
+  }
+
+  const handleEditSave = async () => {
+    if (!editingCategory || newCategoryName === editingCategory.name) {
+      setModalVisible(false)
+      return
     }
 
-    resetForm()
+    try {
+      await putRequest(`category/updatename/${editingCategory.id}`, {
+        name: newCategoryName,
+        userId,
+      })
+      setSuccessModalVisible(true)
+      setSuccessModalText('Categoria atualizada com sucesso!')
+      fetchCategories()
+    } catch (error: any) {
+      setErrorModalVisible(true)
+      setErrorModalText(error.message || 'Erro ao editar categoria')
+    }
+    setModalVisible(false)
   }
 
-  const handleDelete = (name: string) => {
-    Alert.alert('Confirmar exclusão', `Deseja excluir a categoria "${name}"?`, [
-      { text: 'Cancelar', style: 'cancel' },
-      {
-        text: 'Excluir',
-        style: 'destructive',
-        onPress: () => {
-          setCategories(categories.filter(cat => cat !== name))
-        },
-      },
-    ])
+  const changeActive = (category: Category) => {
+    setCategoryToToggle(category)
+    setConfirmModalVisible(true)
   }
 
-  const handleEdit = (name: string) => {
-    Alert.alert(
-      'Editar categoria',
-      `Função de editar "${name}" ainda não implementada.`,
-    )
+  const handleConfirmToggle = async () => {
+    if (!categoryToToggle) return
+
+    try {
+      await putRequest(`category/updateactive/${categoryToToggle.id}`, {
+        active: !categoryToToggle.active,
+      })
+      setConfirmModalVisible(false)
+      setCategoryToToggle(null)
+      fetchCategories()
+      setSuccessModalText('Categoria atualizada com sucesso!')
+      setSuccessModalVisible(true)
+    } catch (error: any) {
+      setErrorModalVisible(true)
+      setErrorModalText(error.message || 'Erro ao editar categoria')
+    }
   }
 
   return (
@@ -95,10 +131,11 @@ export const Categories = () => {
           initialValues={{ category: '' }}
           validationSchema={Yup.object({
             category: Yup.string().required(
-              'É obrigatório a adição do nome da categoria',
+              'É obrigatório informar o nome da categoria',
             ),
           })}
           onSubmit={handleSave}
+          innerRef={formRef}
         >
           {({
             handleChange,
@@ -107,80 +144,98 @@ export const Categories = () => {
             values,
             errors,
             touched,
-          }) => (
-            <>
-              <AppTextInput
-                label="Nome da nova categoria"
-                value={values.category}
-                onChangeText={handleChange('category')}
-                onBlur={handleBlur('category')}
-                error={errors.category}
-                touched={touched.category}
-              />
+            resetForm,
+          }) => {
+            return (
+              <>
+                <CustomTextInput
+                  label="Nome da nova categoria"
+                  value={values.category}
+                  onChangeText={handleChange('category')}
+                />
 
-              <ErrorMessageFormik
-                error={touched.category ? errors.category : undefined}
-              />
-
-              <View style={styles.buttonRow}>
+                <ErrorMessageFormik
+                  error={touched.category ? errors.category : undefined}
+                />
                 <TouchableOpacity
                   style={styles.saveButton}
                   onPress={() => handleSubmit()}
                 >
                   <Text style={styles.saveText}>Salvar</Text>
                 </TouchableOpacity>
-              </View>
-            </>
-          )}
+              </>
+            )
+          }}
         </Formik>
       </View>
+      <Text style={styles.listTitle}>Categorias</Text>
+      <FlatList
+        contentContainerStyle={styles.scrollContent}
+        data={categories}
+        style={{ marginLeft: 20 }}
+        keyExtractor={item => item.id.toString()}
+        ListHeaderComponent={
+          <>
+            {categories.length === 0 && (
+              <View style={{ alignItems: 'center', marginTop: 20 }}>
+                <Text style={{ fontSize: 16, color: colors.gray }}>
+                  Nenhuma categoria encontrada.
+                </Text>
+              </View>
+            )}
+          </>
+        }
+        renderItem={({ item }) => (
+          <CategoryItem
+            category={item}
+            onEdit={cat => {
+              setEditingCategory(cat)
+              setNewCategoryName(cat.name)
+              setModalVisible(true)
+            }}
+            onToggleActive={changeActive}
+          />
+        )}
+      />
 
-      {categories.length > 0 && (
-        <ScrollView
-          contentContainerStyle={styles.scrollContent}
-          keyboardShouldPersistTaps="handled"
-        >
-          <View style={styles.listContainer}>
-            <Text style={styles.listTitle}>Categorias Existentes</Text>
-            <FlatList
-              data={categories}
-              keyExtractor={(item, index) => index.toString()}
-              renderItem={({ item }) => (
-                <View style={styles.categoryItem}>
-                  <Text style={styles.categoryText}>{item.name}</Text>
-                  <View style={styles.actionButtons}>
-                    <TouchableOpacity
-                      style={styles.editButton}
-                      onPress={() => handleEdit(item)}
-                    >
-                      <Text style={styles.buttonText}>Editar</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      style={styles.deleteButton}
-                      onPress={() => handleDelete(item)}
-                    >
-                      <Text style={styles.buttonText}>Excluir</Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              )}
-            />
-          </View>
-        </ScrollView>
-      )}
+      <EditCategoryModal
+        visible={modalVisible}
+        value={newCategoryName}
+        onChange={setNewCategoryName}
+        onCancel={() => setModalVisible(false)}
+        onSave={handleEditSave}
+      />
+
+      <ConfirmModal
+        visible={confirmModalVisible}
+        onCancel={() => setConfirmModalVisible(false)}
+        onConfirm={handleConfirmToggle}
+        title={`${categoryToToggle?.active ? 'Desativar' : 'Ativar'} Categoria`}
+        message={`Deseja realmente ${
+          categoryToToggle?.active ? 'desativar' : 'ativar'
+        } a categoria "${categoryToToggle?.name}"?`}
+      />
+
+      <SuccessModal
+        visible={successModalVisible}
+        message={successModalText}
+        onClose={() => {
+          setSuccessModalVisible(false)
+        }}
+      />
+      <ErrorModal
+        visible={errorModalVisible}
+        message={errorModalText}
+        onClose={() => {
+          setErrorModalVisible(false)
+        }}
+      />
     </View>
   )
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f1f1f1',
-  },
-  scrollContent: {
-    paddingBottom: 40,
-    marginTop: 20,
-  },
+  container: { flex: 1, backgroundColor: '#f1f1f1' },
   card: {
     backgroundColor: '#fff',
     marginTop: -20,
@@ -188,79 +243,22 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     elevation: 4,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
   },
-  buttonRow: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    marginTop: 12,
-  },
-  resetButton: {
-    backgroundColor: '#f44336',
-    paddingVertical: 10,
-    paddingHorizontal: 14,
-    borderRadius: 8,
-  },
+  scrollContent: { paddingBottom: 40, marginTop: 20 },
   saveButton: {
-    backgroundColor: '#2c8f8f',
+    backgroundColor: colors.primaryBackground,
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 8,
+    alignSelf: 'flex-end',
+    marginTop: 12,
   },
-  resetText: {
-    color: '#fff',
-    fontWeight: '600',
-  },
-  saveText: {
-    color: '#fff',
-    fontWeight: '600',
-  },
-  listContainer: {
-    marginTop: 20,
-    paddingHorizontal: 16,
-  },
+  saveText: { color: '#fff', fontWeight: '600' },
   listTitle: {
-    fontSize: 16,
+    fontSize: 18,
+    marginLeft: 16,
+    marginVertical: 8,
     fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  categoryItem: {
-    backgroundColor: '#fff',
-    padding: 12,
-    borderRadius: 8,
-    marginBottom: 10,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    elevation: 2,
-  },
-  categoryText: {
-    fontSize: 14,
-    flex: 1,
-  },
-  actionButtons: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-  editButton: {
-    backgroundColor: colors.primary,
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: 6,
-    marginRight: 6,
-  },
-  deleteButton: {
-    backgroundColor: colors.error,
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: 6,
-  },
-  buttonText: {
-    color: '#fff',
-    fontWeight: '600',
-    fontSize: 12,
   },
 })
 

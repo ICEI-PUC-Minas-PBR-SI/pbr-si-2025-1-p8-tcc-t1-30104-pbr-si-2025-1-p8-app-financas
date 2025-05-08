@@ -20,6 +20,7 @@ export default function Login() {
   const [secureText, setSecureText] = useState(true)
 
   const login = async (values: { email: string; password: string }) => {
+    console.log('a')
     try {
       const result = await onLogin!(values.email, values.password)
       if (result?.error) {
