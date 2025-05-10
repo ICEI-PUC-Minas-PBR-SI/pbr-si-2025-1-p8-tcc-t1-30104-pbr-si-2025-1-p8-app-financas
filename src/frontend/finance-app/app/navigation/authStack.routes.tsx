@@ -3,8 +3,10 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'
 
 import { Categories } from '../screens/Categories'
 import EditProfile from '../screens/auth/EditProfile'
+import DeleteProfile from '../screens/auth/DeleteProfile'
 import Profile from '../screens/Profile'
 import AddTransaction from '../screens/AddTransaction'
+import HelpScreen from '../screens/HelpScreen'
 import { Wallet } from '../screens/Wallet'
 
 const Stack = createNativeStackNavigator()
@@ -26,6 +28,16 @@ export function ProfileStack() {
         name="Categories"
         component={Categories}
         options={{ title: 'Categorias' }}
+      />
+      <Stack.Screen
+        name="deleteProfile"
+        component={DeleteProfile}
+        options={{ title: 'Deletar Conta' }}
+      />
+      <Stack.Screen
+        name="helpScreen"
+        component={HelpScreen}
+        options={{ title: 'Ajuda' }}
       />
     </Stack.Navigator>
   )

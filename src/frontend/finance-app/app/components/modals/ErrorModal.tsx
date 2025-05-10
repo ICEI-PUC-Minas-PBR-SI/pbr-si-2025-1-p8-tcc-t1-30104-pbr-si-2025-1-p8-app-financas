@@ -1,6 +1,6 @@
-import React from 'react'
-import { Modal, View, Text, StyleSheet, TouchableOpacity } from 'react-native'
-import colors from '../../utils/colors'
+import React from "react"
+import { Modal, View, Text, StyleSheet, TouchableOpacity } from "react-native"
+import colors from "../../utils/colors"
 
 interface ErrorModalProps {
   visible: boolean
@@ -12,10 +12,10 @@ interface ErrorModalProps {
 
 const ErrorModal = ({
   visible,
-  title = 'Erro',
+  title = "Erro",
   message,
   onClose,
-  buttonText = 'Fechar',
+  buttonText = "Fechar",
 }: ErrorModalProps) => {
   return (
     <Modal
@@ -42,32 +42,32 @@ const ErrorModal = ({
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
   },
   modalContent: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderRadius: 12,
     padding: 24,
-    width: '80%',
+    width: "80%",
   },
   title: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 12,
-    textAlign: 'center',
+    textAlign: "center",
     color: colors.error,
   },
   message: {
     fontSize: 16,
-    textAlign: 'left',
+    textAlign: "left",
     marginBottom: 20,
-    color: '#333',
+    color: "#333",
   },
   buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
+    flexDirection: "row",
+    justifyContent: "flex-end",
   },
   button: {
     backgroundColor: colors.error,
@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: colors.white,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     fontSize: 16,
   },
 })

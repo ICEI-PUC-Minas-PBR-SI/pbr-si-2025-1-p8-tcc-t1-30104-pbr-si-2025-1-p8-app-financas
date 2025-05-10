@@ -6,7 +6,8 @@ import { useFocusEffect } from '@react-navigation/native'
 import Wallet from '../screens/Wallet'
 import AddTransaction from '../screens/AddTransaction'
 import MonthlySummary from '../screens/graphs/MonthlySummary'
-import { ProfileStack, WalletStack } from './authStack.routes'
+import { ProfileStack } from './authStack.routes'
+import StatisticsScreen from '../screens/graphs/Statistics'
 const { width } = Dimensions.get('window')
 
 const Tab = createBottomTabNavigator()
@@ -58,9 +59,9 @@ const withSlideFade = (Component: React.ComponentType<any>) => (props: any) =>
 export const TabRoutes = () => {
   return (
     <Tab.Navigator
-      screenOptions={({ route }) => ({
+      screenOptions={({ route }: { route: { name: string } }) => ({
         headerShown: false,
-        tabBarIcon: ({ color, size }) => {
+        tabBarIcon: ({ color, size }: { color: string; size: number }) => {
           let iconName = ''
 
           switch (route.name) {
@@ -71,6 +72,9 @@ export const TabRoutes = () => {
               iconName = 'cash-outline'
               break
             case 'Gráficos':
+              iconName = 'bar-chart-outline'
+              break
+            case 'Estatísticas':
               iconName = 'bar-chart-outline'
               break
             case 'Perfil':
@@ -88,7 +92,7 @@ export const TabRoutes = () => {
     >
       <Tab.Screen
         name="Carteira"
-        component={withSlideFade(WalletStack)}
+        component={withSlideFade(Wallet)}
         options={{ unmountOnBlur: true }}
       />
       <Tab.Screen
@@ -99,6 +103,11 @@ export const TabRoutes = () => {
       <Tab.Screen
         name="Gráficos"
         component={withSlideFade(MonthlySummary)}
+        options={{ unmountOnBlur: true }}
+      />
+      <Tab.Screen
+        name="Estatísticas"
+        component={withSlideFade(StatisticsScreen)}
         options={{ unmountOnBlur: true }}
       />
       <Tab.Screen

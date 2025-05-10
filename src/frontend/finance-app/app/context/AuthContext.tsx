@@ -1,7 +1,7 @@
-import { createContext, useContext, useEffect, useState } from 'react'
-import axios from 'axios'
-import * as SecureStore from 'expo-secure-store'
-import API_URL from '../services/api'
+import { createContext, useContext, useEffect, useState } from "react"
+import axios from "axios"
+import * as SecureStore from "expo-secure-store"
+import API_URL from "../services/api"
 
 interface AuthProps {
   authState?: { token: string | null; authenticated: boolean | null }
@@ -11,9 +11,9 @@ interface AuthProps {
   userInfo?: any
   userId?: number | null
 }
-const TOKEN_KEY = 'my-jwt'
-const USER_ID_KEY = 'user-id'
-const USER_INFO_KEY = 'user-info'
+const TOKEN_KEY = "my-jwt"
+const USER_ID_KEY = "user-id"
+const USER_INFO_KEY = "user-info"
 
 const AuthContext = createContext<AuthProps>({})
 
@@ -39,7 +39,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const storedUserInfo = await SecureStore.getItemAsync(USER_INFO_KEY)
 
       if (token) {
-        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
+        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`
         setAuthState({ token, authenticated: true })
 
         if (storedUserId) setUserId(Number(storedUserId))
@@ -80,7 +80,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const { id, ...userWithoutId } = user
       setUserInfo(userWithoutId)
 
-      API_URL.defaults.headers.common['Authorization'] = `Bearer ${tempToken}`
+      API_URL.defaults.headers.common["Authorization"] = `Bearer ${tempToken}`
 
       await SecureStore.setItemAsync(TOKEN_KEY, tempToken)
       await SecureStore.setItemAsync(USER_ID_KEY, String(user.id))
@@ -102,7 +102,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     await SecureStore.deleteItemAsync(USER_ID_KEY)
     await SecureStore.deleteItemAsync(USER_INFO_KEY)
 
-    axios.defaults.headers.common['Authorization'] = ''
+    axios.defaults.headers.common["Authorization"] = ""
 
     setAuthState({ token: null, authenticated: false })
     setUserInfo(null)

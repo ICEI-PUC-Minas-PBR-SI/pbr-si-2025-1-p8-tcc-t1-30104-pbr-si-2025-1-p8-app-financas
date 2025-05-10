@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
-import { View, StyleSheet, TouchableOpacity } from 'react-native'
-import { TextInput } from 'react-native-paper'
+import React, { useState } from "react"
+import { View, StyleSheet, TouchableOpacity } from "react-native"
+import { TextInput } from "react-native-paper"
 
 interface PasswordInputProps {
   label?: string
@@ -30,7 +30,7 @@ const PasswordInput: React.FC<PasswordInputProps> = ({
         label={label}
         right={
           <TextInput.Icon
-            icon={isPasswordVisible ? 'eye-off' : 'eye'}
+            icon={isPasswordVisible ? "eye-off" : "eye"}
             onPress={() => setIsPasswordVisible(!isPasswordVisible)}
           />
         }
@@ -44,17 +44,17 @@ const styles = StyleSheet.create({
   input: {
     marginTop: 5,
     marginBottom: 0,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: "#f0f0f0",
     borderRadius: 8,
     height: 50,
     paddingLeft: 10,
     paddingRight: 40,
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
   },
   passwordInputContainer: {
     marginBottom: 10,
-    width: '100%',
+    width: "100%",
   },
 })
 

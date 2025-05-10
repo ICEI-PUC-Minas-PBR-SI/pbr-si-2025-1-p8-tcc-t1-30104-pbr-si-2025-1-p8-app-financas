@@ -1,18 +1,18 @@
-import React, { useState } from 'react'
-import { View, Text, StyleSheet } from 'react-native'
-import { useAuth } from '../../context/AuthContext'
-import { Link } from '@react-navigation/native'
-import CustomTextInput from '../../components/formik/CustomTextInput'
-import { Formik } from 'formik'
-import * as Yup from 'yup'
-import ErrorMessageFormik from '../../components/formik/ErrorMessageFormik'
-import CustomButton from '../../components/formik/CustomButton'
-import colors from '../../utils/colors'
-import { TextInput } from 'react-native-paper'
+import React, { useState } from "react"
+import { View, Text, StyleSheet } from "react-native"
+import { useAuth } from "../../context/AuthContext"
+import { Link } from "@react-navigation/native"
+import CustomTextInput from "../../components/formik/CustomTextInput"
+import { Formik } from "formik"
+import * as Yup from "yup"
+import ErrorMessageFormik from "../../components/formik/ErrorMessageFormik"
+import CustomButton from "../../components/formik/CustomButton"
+import colors from "../../utils/colors"
+import { TextInput } from "react-native-paper"
 
 const validationSchema = Yup.object().shape({
-  email: Yup.string().email('Email inválido').required('Email é obrigatório'),
-  password: Yup.string().required('Senha é obrigatória'),
+  email: Yup.string().email("Email inválido").required("Email é obrigatório"),
+  password: Yup.string().required("Senha é obrigatória"),
 })
 
 export default function Login() {
@@ -20,7 +20,6 @@ export default function Login() {
   const [secureText, setSecureText] = useState(true)
 
   const login = async (values: { email: string; password: string }) => {
-    console.log('a')
     try {
       const result = await onLogin!(values.email, values.password)
       if (result?.error) {
@@ -39,7 +38,7 @@ export default function Login() {
         </Text>
       </View>
       <Formik
-        initialValues={{ email: '', password: '' }}
+        initialValues={{ email: "", password: "" }}
         validationSchema={validationSchema}
         onSubmit={login}
       >
@@ -56,8 +55,8 @@ export default function Login() {
             <CustomTextInput
               label="Email"
               value={values.email}
-              onChangeText={handleChange('email')}
-              onBlur={handleBlur('email')}
+              onChangeText={handleChange("email")}
+              onBlur={handleBlur("email")}
               keyboardType="email-address"
             />
 
@@ -68,8 +67,8 @@ export default function Login() {
             <TextInput
               label="Senha"
               value={values.password}
-              onChangeText={handleChange('password')}
-              onBlur={handleBlur('password')}
+              onChangeText={handleChange("password")}
+              onBlur={handleBlur("password")}
               secureTextEntry={secureText}
               mode="outlined"
               style={styles.input}
@@ -77,7 +76,7 @@ export default function Login() {
               activeOutlineColor="#007BFF"
               right={
                 <TextInput.Icon
-                  icon={secureText ? 'eye-off' : 'eye'}
+                  icon={secureText ? "eye-off" : "eye"}
                   onPress={() => setSecureText(!secureText)}
                 />
               }
@@ -109,24 +108,24 @@ export default function Login() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
     backgroundColor: colors.background,
   },
   logoContainer: {
     marginBottom: 30,
-    alignItems: 'center',
+    alignItems: "center",
   },
   logoText: {
     fontSize: 45,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     color: colors.primary,
-    textAlign: 'center',
+    textAlign: "center",
   },
   form: {
     gap: 5,
-    width: '70%',
+    width: "70%",
   },
   link: {
     marginTop: 15,
@@ -136,7 +135,7 @@ const styles = StyleSheet.create({
   input: {
     marginTop: 5,
     marginBottom: 2,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: "#f0f0f0",
     borderRadius: 8,
     height: 50,
   },

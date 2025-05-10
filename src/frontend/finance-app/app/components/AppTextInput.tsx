@@ -1,6 +1,6 @@
-import React from 'react'
-import { TextInput as PaperTextInput } from 'react-native-paper'
-import { StyleSheet } from 'react-native'
+import React from "react"
+import { TextInput as PaperTextInput } from "react-native-paper"
+import { StyleSheet } from "react-native"
 
 interface AppTextInputProps {
   label: string
@@ -10,7 +10,7 @@ interface AppTextInputProps {
   error?: string | undefined
   touched?: boolean
   secureTextEntry?: boolean
-  keyboardType?: 'default' | 'numeric' | 'email-address'
+  keyboardType?: "default" | "numeric" | "email-address"
 }
 
 export const AppTextInput = ({
@@ -21,7 +21,7 @@ export const AppTextInput = ({
   error,
   touched,
   secureTextEntry = false,
-  keyboardType = 'default',
+  keyboardType = "default",
 }: AppTextInputProps) => {
   return (
     <PaperTextInput

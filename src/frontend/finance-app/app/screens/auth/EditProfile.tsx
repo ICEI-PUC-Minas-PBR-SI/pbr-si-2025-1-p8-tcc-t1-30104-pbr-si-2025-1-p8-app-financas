@@ -1,28 +1,31 @@
-import React, { useState } from 'react'
-import { View, Text, StyleSheet, Alert } from 'react-native'
-import { Formik } from 'formik'
-import * as Yup from 'yup'
-import CustomTextInput from '../../components/formik/CustomTextInput'
-import ErrorMessageFormik from '../../components/formik/ErrorMessageFormik'
-import CustomButton from '../../components/formik/CustomButton'
-import { useAuth } from '../../context/AuthContext'
-import colors from '../../utils/colors'
-import { useNavigation } from '@react-navigation/native'
-import { putRequest } from '../../services/apiServices'
-import SuccessModal from '../../components/modals/SuccessModal'
+import React, { useState } from "react"
+import { View, Text, StyleSheet, Alert } from "react-native"
+import { Formik } from "formik"
+import * as Yup from "yup"
+import CustomTextInput from "../../components/formik/CustomTextInput"
+import ErrorMessageFormik from "../../components/formik/ErrorMessageFormik"
+import CustomButton from "../../components/formik/CustomButton"
+import { useAuth } from "../../context/AuthContext"
+import colors from "../../utils/colors"
+import { useNavigation } from "@react-navigation/native"
+import { putRequest } from "../../services/apiServices"
+import SuccessModal from "../../components/modals/SuccessModal"
+import ErrorModal from "../../components/modals/ErrorModal"
 
 const validationSchema = Yup.object().shape({
   name: Yup.string()
-    .required('O nome é obrigatório')
+    .required("O nome é obrigatório")
     .matches(
       /^[A-Za-zÀ-ÿ\s]+$/,
-      'O nome não pode conter números ou caracteres especiais',
+      "O nome não pode conter números ou caracteres especiais",
     ),
 })
 
 export default function EditProfile() {
   const { userInfo, userId, onLogout } = useAuth()
   const [successModalVisible, setSuccessModalVisible] = useState(false)
+  const [errorModalText, setErrorModalText] = useState("")
+  const [errorModalVisible, setErrorModalVisible] = useState(false)
   const navigation = useNavigation()
 
   const handleUpdate = async (values: { name: string }) => {
@@ -32,7 +35,8 @@ export default function EditProfile() {
       })
       setSuccessModalVisible(true)
     } catch (error: any) {
-      Alert.alert('Erro', error.message || 'Erro ao atualizar.')
+      setErrorModalVisible(true)
+      setErrorModalText(error.message || "Erro ao editar usuário")
       console.error(error)
     }
   }
@@ -57,8 +61,8 @@ export default function EditProfile() {
             <CustomTextInput
               label="Nome"
               value={values.name}
-              onChangeText={handleChange('name')}
-              onBlur={handleBlur('name')}
+              onChangeText={handleChange("name")}
+              onBlur={handleBlur("name")}
             />
             <ErrorMessageFormik
               error={touched.name ? errors.name : undefined}
@@ -66,8 +70,8 @@ export default function EditProfile() {
             <CustomTextInput
               label="E-mail"
               value={values.email}
-              onChangeText={handleChange('name')}
-              onBlur={handleBlur('name')}
+              onChangeText={handleChange("name")}
+              onBlur={handleBlur("name")}
               disabled
             />
             <CustomButton
@@ -86,6 +90,13 @@ export default function EditProfile() {
           onLogout?.()
         }}
       />
+      <ErrorModal
+        visible={errorModalVisible}
+        message={errorModalText}
+        onClose={() => {
+          setErrorModalVisible(false)
+        }}
+      />
     </View>
   )
 }
@@ -94,18 +105,18 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
-    alignItems: 'center',
+    alignItems: "center",
     paddingTop: 100,
     paddingHorizontal: 30,
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     color: colors.primary,
     marginBottom: 30,
   },
   form: {
-    width: '100%',
+    width: "100%",
     gap: 10,
   },
 })

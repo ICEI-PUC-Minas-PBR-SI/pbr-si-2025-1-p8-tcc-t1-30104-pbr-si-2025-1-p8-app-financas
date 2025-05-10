@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react"
 import {
   Modal,
   View,
@@ -6,8 +6,8 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-} from 'react-native'
-import colors from '../../utils/colors'
+} from "react-native"
+import colors from "../../utils/colors"
 
 interface Props {
   visible: boolean
@@ -50,25 +50,25 @@ export const EditCategoryModal: React.FC<Props> = ({
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modal: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     padding: 20,
     borderRadius: 10,
-    width: '80%',
+    width: "80%",
   },
   title: { marginBottom: 10 },
   input: {
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     borderRadius: 8,
     padding: 10,
     marginBottom: 15,
   },
-  actions: { flexDirection: 'row', justifyContent: 'flex-end' },
+  actions: { flexDirection: "row", justifyContent: "flex-end" },
   cancel: {
     backgroundColor: colors.error,
     paddingVertical: 10,
@@ -82,6 +82,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 8,
   },
-  cancelText: { color: '#fff', fontWeight: '600' },
-  saveText: { color: '#fff', fontWeight: '600' },
+  cancelText: { color: "#fff", fontWeight: "600" },
+  saveText: { color: "#fff", fontWeight: "600" },
 })

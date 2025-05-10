@@ -1,7 +1,7 @@
-import React from 'react'
-import { View, Text, StyleSheet } from 'react-native'
-import Icon from 'react-native-vector-icons/Feather'
-import colors from '../../utils/colors'
+import React from "react"
+import { View, Text, StyleSheet } from "react-native"
+import Icon from "react-native-vector-icons/Feather"
+import colors from "../../utils/colors"
 
 interface WalletCardProps {
   balance: number
@@ -57,21 +57,21 @@ const styles = StyleSheet.create({
   balance: {
     color: colors.white,
     fontSize: 28,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginVertical: 8,
   },
   row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginTop: 8,
   },
   column: {
     flex: 1,
-    alignItems: 'flex-start',
+    alignItems: "flex-start",
   },
   iconRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   label: {
     color: colors.white,
@@ -79,16 +79,16 @@ const styles = StyleSheet.create({
     marginLeft: 4,
   },
   amount: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
     fontSize: 16,
     marginTop: 4,
   },
   columnLeft: {
     flex: 1,
-    alignItems: 'flex-start',
+    alignItems: "flex-start",
   },
   columnRight: {
     flex: 1,
-    alignItems: 'flex-end',
+    alignItems: "flex-end",
   },
 })

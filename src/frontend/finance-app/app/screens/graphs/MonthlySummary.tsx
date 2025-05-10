@@ -1,130 +1,139 @@
-import React, { useState } from 'react'
-import { View, Text, StyleSheet, ScrollView } from 'react-native'
-import { Header } from '../../components/Header'
-import { PieChart } from 'react-native-chart-kit'
-import { Dimensions } from 'react-native'
-import { useAuth } from '../../context/AuthContext'
-import { useFocusEffect } from '@react-navigation/native'
-import { getRequest } from '../../services/apiServices'
-import colors from '../../utils/colors'
+import React, { useState, useCallback } from "react"
+import { View, Text, StyleSheet, ScrollView, Dimensions } from "react-native"
+import { useAuth } from "../../context/AuthContext"
+import { useFocusEffect } from "@react-navigation/native"
+import { getRequest } from "../../services/apiServices"
+import { PieChart } from "react-native-chart-kit"
+import OverviewItem from "../../components/summary/OverviewItem"
+import TransactionItem from "../../components/summary/TransactionItem"
+import colors from "../../utils/colors"
 
-const screenWidth = Dimensions.get('window').width
+const screenWidth = Dimensions.get("window").width
 
-export const MonthlySummary = () => {
+const chartConfig = {
+  width: screenWidth - 32,
+  height: 160,
+  chartConfig: {
+    color: () => "#000",
+    backgroundColor: "#fff",
+    backgroundGradientFrom: "#fff",
+    backgroundGradientTo: "#fff",
+  },
+  accessor: "amount",
+  backgroundColor: "transparent",
+  paddingLeft: "0",
+  center: [0, 0],
+}
+
+const MonthlySummary = () => {
   const { userId } = useAuth()
   const [info, setInfo] = useState<
-    { totalIncome?: string; totalExpense?: string } | undefined
+    | {
+        totalIncome?: string
+        totalExpense?: string
+        incomeByCategory?: Record<string, any>
+        expenseByCategory?: Record<string, any>
+      }
+    | undefined
   >(undefined)
 
   useFocusEffect(
-    React.useCallback(() => {
+    useCallback(() => {
       const fetchTransactions = async () => {
         try {
           const data: any = await getRequest(`graphs/summary/${userId}`)
           setInfo(data)
         } catch (error) {
-          console.error('Erro ao buscar transações:', error)
+          console.error("Erro ao buscar transações:", error)
         }
       }
 
       fetchTransactions()
-
-      return () => {}
     }, [userId]),
   )
 
-  const data = [
+  const chartData = [
     {
-      name: 'Receitas',
-      amount: 7400,
-      color: '#4CAF50',
-      legendFontColor: '#333',
+      name: "Receitas",
+      amount: info?.totalIncome ? Number(info.totalIncome) : 0,
+      color: "#4CAF50",
+      legendFontColor: "#333",
       legendFontSize: 14,
     },
     {
-      name: 'Despesas',
-      amount: 2045,
-      color: '#f44336',
-      legendFontColor: '#333',
+      name: "Despesas",
+      amount: info?.totalExpense ? Number(info.totalExpense) : 0,
+      color: "#f44336",
+      legendFontColor: "#333",
       legendFontSize: 14,
     },
   ]
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>Resumo Mensal</Text>
       </View>
 
-      <ScrollView contentContainerStyle={styles.container}>
+      <ScrollView contentContainerStyle={styles.contentContainer}>
         <Text style={styles.sectionTitle}>Visão geral</Text>
-        <View style={styles.overviewItem}>
-          <View
-            style={{
-              width: 12,
-              height: 12,
-              borderRadius: 6,
-              backgroundColor: '#4CAF50',
-            }}
-          />
-          <Text style={styles.label}>Receitas</Text>
-          <Text style={styles.valueGreen}>
-            R$ {info?.totalIncome != '0' ? info?.totalIncome : '00,00'}
-          </Text>
-        </View>
-        <View style={styles.overviewItem}>
-          <View
-            style={{
-              width: 12,
-              height: 12,
-              borderRadius: 6,
-              backgroundColor: '#f44336',
-            }}
-          />
-          <Text style={styles.label}>Despesas</Text>
-          <Text style={styles.valueRed}>
-            R$ {info?.totalExpense != '0' ? info?.totalExpense : '00,00'}
-          </Text>
-        </View>
+        <OverviewItem
+          label="Receitas"
+          value={info?.totalIncome || "0"}
+          color="#4CAF50"
+        />
+        <OverviewItem
+          label="Despesas"
+          value={info?.totalExpense || "0"}
+          color="#f44336"
+        />
 
         <Text style={styles.sectionTitle}>Resumo</Text>
-        <PieChart
-          data={data}
-          width={screenWidth - 32}
-          height={160}
-          chartConfig={{
-            color: () => `#000`,
-            backgroundColor: '#fff',
-            backgroundGradientFrom: '#fff',
-            backgroundGradientTo: '#fff',
-          }}
-          accessor={'amount'}
-          backgroundColor={'transparent'}
-          paddingLeft={'0'}
-          center={[0, 0]}
-          absolute
-        />
+        <PieChart data={chartData} {...chartConfig} />
         <View style={styles.summaryText}>
-          <Text style={styles.income}>Receitas: 7.400,00 R$</Text>
-          <Text style={styles.expense}>Despesas: -2.045,00 R$</Text>
-          <Text style={styles.total}>Total: 5.355,00 R$</Text>
+          <Text style={styles.income}>
+            Receitas: {Number(info?.totalIncome || 0).toFixed(2)} R$
+          </Text>
+          <Text style={styles.expense}>
+            Despesas: {Number(info?.totalExpense || 0).toFixed(2)} R$
+          </Text>
+          <Text style={styles.total}>
+            Total:{" "}
+            {(
+              Number(info?.totalIncome || 0) - Number(info?.totalExpense || 0)
+            ).toFixed(2)}{" "}
+            R$
+          </Text>
         </View>
 
-        <Text style={styles.sectionTitle}>Contas</Text>
-        <View style={styles.accountItem}>
-          <View style={styles.accountText}>
-            <Text style={styles.label}>Carteira</Text>
-            <Text style={styles.subtext}>Última utilização: 16/05/2018</Text>
-          </View>
-          <Text style={styles.valueGreen}>6.610,00 R$</Text>
-        </View>
-        <View style={styles.accountItem}>
-          <View style={styles.accountText}>
-            <Text style={styles.label}>Conta Poupança</Text>
-            <Text style={styles.subtext}>Data de criação: 05/04/2018</Text>
-          </View>
-          <Text style={styles.valueRed}>-542,00 R$</Text>
-        </View>
+        <Text style={styles.sectionTitle}>Transações</Text>
+        {info?.incomeByCategory &&
+          Object.entries(info.incomeByCategory).map(
+            ([categoryId, categoryData]) => (
+              <TransactionItem
+                key={categoryId}
+                categoryId={categoryId}
+                categoryName={categoryData.name}
+                type="entrada"
+                amount={categoryData.lastTransaction?.amount || "0"}
+                date={categoryData.lastTransaction?.date || "N/A"}
+              />
+            ),
+          )}
+
+        {info?.expenseByCategory &&
+          Object.entries(info.expenseByCategory).map(
+            ([categoryId, categoryData]) => (
+              <TransactionItem
+                key={categoryId}
+                categoryId={categoryId}
+                categoryName={categoryData.name}
+                type="saida"
+                amount={categoryData.lastTransaction?.amount || "0"}
+                date={categoryData.lastTransaction?.date || "N/A"}
+              />
+            ),
+          )}
       </ScrollView>
     </View>
   )
@@ -132,75 +141,45 @@ export const MonthlySummary = () => {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
-    backgroundColor: '#f1f1f1',
+    flex: 1,
   },
   header: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: 200,
     backgroundColor: colors.primaryBackground,
+    paddingTop: 50,
+    paddingBottom: 16,
+    paddingHorizontal: 16,
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
-    zIndex: 0,
   },
   title: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 20,
-    fontWeight: 'bold',
-    marginTop: 50,
-    textAlign: 'center',
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  contentContainer: {
+    padding: 16,
+    backgroundColor: "#f1f1f1",
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginTop: 16,
     marginBottom: 8,
-  },
-  overviewItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 8,
-    gap: 8,
-  },
-  label: {
-    flex: 1,
-    fontSize: 14,
-  },
-  valueGreen: {
-    color: '#4CAF50',
-    fontWeight: 'bold',
-  },
-  valueRed: {
-    color: '#f44336',
-    fontWeight: 'bold',
   },
   summaryText: {
     marginTop: 12,
     gap: 4,
   },
   income: {
-    color: '#4CAF50',
+    color: "#4CAF50",
   },
   expense: {
-    color: '#f44336',
+    color: "#f44336",
   },
   total: {
-    fontWeight: 'bold',
-  },
-  accountItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 12,
-  },
-  accountText: {
-    flex: 1,
-  },
-  subtext: {
-    fontSize: 12,
-    color: '#666',
+    fontWeight: "bold",
   },
 })
+
 export default MonthlySummary

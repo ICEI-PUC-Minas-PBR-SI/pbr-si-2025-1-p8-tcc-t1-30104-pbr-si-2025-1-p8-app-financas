@@ -1,20 +1,20 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from "react"
 import {
   View,
   Text,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
-} from 'react-native'
-import { WalletCard } from '../components/wallet/WalletCard'
-import { TransactionItem } from '../components/wallet/TransactionItem'
-import ChatButton from '../components/chat/ChatButton'
-import ChatModal from '../components/chat/chatModal'
-import colors from '../utils/colors'
-import { getRequest } from '../services/apiServices'
-import { useAuth } from '../context/AuthContext'
-import { Transaction, TransactionSummary } from '../services/types'
-import { useNavigation, useFocusEffect } from '@react-navigation/native'
+} from "react-native"
+import { WalletCard } from "../components/wallet/WalletCard"
+import { TransactionItem } from "../components/wallet/TransactionItem"
+import ChatButton from "../components/chat/ChatButton"
+import ChatModal from "../components/chat/ChatModal"
+import colors from "../utils/colors"
+import { getRequest } from "../services/apiServices"
+import { useAuth } from "../context/AuthContext"
+import { Transaction, TransactionSummary } from "../services/types"
+import { useNavigation, useFocusEffect } from "@react-navigation/native"
 
 export const Wallet: React.FC = () => {
   const { userId } = useAuth()
@@ -31,7 +31,7 @@ export const Wallet: React.FC = () => {
           )
           setTransactions(data.transactions)
         } catch (error) {
-          console.error('Erro ao buscar transações:', error)
+          console.error("Erro ao buscar transações:", error)
         }
       }
 
@@ -42,11 +42,11 @@ export const Wallet: React.FC = () => {
   )
 
   const income = transactions
-    .filter(t => t.type == 'entrada')
+    .filter(t => t.type == "entrada")
     .reduce((acc, t) => acc + t.amount, 0)
 
   const expense = transactions
-    .filter(t => t.type == 'saida')
+    .filter(t => t.type == "saida")
     .reduce((acc, t) => acc + t.amount, 0)
 
   const balance = income - expense
@@ -68,7 +68,7 @@ export const Wallet: React.FC = () => {
       <Text style={styles.historyTitle}>Histórico</Text>
 
       {transactions.length === 0 && (
-        <View style={{ alignItems: 'center', marginTop: 20 }}>
+        <View style={{ alignItems: "center", marginTop: 20 }}>
           <Text style={{ fontSize: 16, color: colors.gray }}>
             Nenhuma transação encontrada.
           </Text>
@@ -96,10 +96,10 @@ export const Wallet: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   header: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     left: 0,
     right: 0,
@@ -118,12 +118,12 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginLeft: 16,
     marginVertical: 8,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   title: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 34,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginTop: 40,
     marginLeft: 16,
   },

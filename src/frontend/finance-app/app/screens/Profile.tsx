@@ -1,22 +1,23 @@
-import React from 'react'
+import React from "react"
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
   FlatList,
-} from 'react-native'
-import { useAuth } from '../context/AuthContext'
-import { Ionicons } from '@expo/vector-icons'
-import colors from '../utils/colors'
-import { useNavigation } from '@react-navigation/native'
+} from "react-native"
+import { useAuth } from "../context/AuthContext"
+import { Ionicons } from "@expo/vector-icons"
+import colors from "../utils/colors"
+import { useNavigation } from "@react-navigation/native"
 
 const options = [
-  { id: '0', icon: 'person-outline', label: 'Categorias' },
-  { id: '1', icon: 'create-outline', label: 'Editar Perfil' },
-  { id: '2', icon: 'settings-outline', label: 'Configurações' },
-  { id: '3', icon: 'help-circle-outline', label: 'Ajuda' },
-  { id: '4', icon: 'log-out-outline', label: 'Sair' },
+  { id: "0", icon: "person-outline", label: "Categorias" },
+  { id: "1", icon: "create-outline", label: "Editar Perfil" },
+  { id: "2", icon: "settings-outline", label: "Configurações" },
+  { id: "3", icon: "help-circle-outline", label: "Ajuda" },
+  { id: "4", icon: "trash", label: "Deletar Conta" },
+  { id: "5", icon: "log-out-outline", label: "Sair" },
 ]
 
 export const Profile = () => {
@@ -25,24 +26,28 @@ export const Profile = () => {
 
   const handleOptionPress = (label: string) => {
     switch (label) {
-      case 'Sair':
+      case "Sair":
         onLogout?.()
         break
 
-      case 'Categorias':
-        navigation.navigate('Categories')
+      case "Categorias":
+        navigation.navigate("Categories")
         break
 
-      case 'Editar Perfil':
-        navigation.navigate('EditProfile')
+      case "Editar Perfil":
+        navigation.navigate("EditProfile")
         break
 
-      case 'Configurações':
-        console.log('Navegar para tela de configurações')
+      case "Configurações":
+        console.log("Navegar para tela de configurações")
         break
 
-      case 'Ajuda':
-        console.log('Navegar para tela de ajuda')
+      case "Ajuda":
+        navigation.navigate("helpScreen")
+        break
+
+      case "Deletar Conta":
+        navigation.navigate("deleteProfile")
         break
 
       default:
@@ -78,24 +83,24 @@ export const Profile = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
+    alignItems: "center",
     paddingTop: 50,
     backgroundColor: colors.background,
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     color: colors.black,
     marginVertical: 20,
   },
   optionsList: {
-    width: '100%',
+    width: "100%",
     paddingHorizontal: 30,
     marginTop: 30,
   },
   optionItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingVertical: 15,
     borderBottomWidth: 1,
     borderBottomColor: colors.backgroundChat,
@@ -103,7 +108,7 @@ const styles = StyleSheet.create({
   optionText: {
     fontSize: 16,
     marginLeft: 15,
-    color: '#333',
+    color: "#333",
   },
 })
 

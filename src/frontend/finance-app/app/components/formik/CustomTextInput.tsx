@@ -1,6 +1,6 @@
-import React from 'react'
-import { TextInput } from 'react-native-paper'
-import { StyleSheet, TextInputProps } from 'react-native'
+import React from "react"
+import { TextInput } from "react-native-paper"
+import { StyleSheet, TextInputProps } from "react-native"
 
 interface CustomTextInputProps extends TextInputProps {
   label: string
@@ -8,14 +8,14 @@ interface CustomTextInputProps extends TextInputProps {
   onChangeText: (text: string) => void
   style?: object
   keyboardType?:
-    | 'default'
-    | 'email-address'
-    | 'numeric'
-    | 'phone-pad'
-    | 'decimal-pad'
-    | 'number-pad'
-    | 'url'
-    | 'visible-password'
+    | "default"
+    | "email-address"
+    | "numeric"
+    | "phone-pad"
+    | "decimal-pad"
+    | "number-pad"
+    | "url"
+    | "visible-password"
   disabled?: boolean
 }
 
@@ -24,7 +24,7 @@ const CustomTextInput: React.FC<CustomTextInputProps> = ({
   value,
   onChangeText,
   style,
-  keyboardType = 'default',
+  keyboardType = "default",
   disabled = false,
 }) => {
   return (
@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
   input: {
     marginTop: 5,
     marginBottom: 2,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: "#f0f0f0",
     borderRadius: 8,
     height: 50,
   },

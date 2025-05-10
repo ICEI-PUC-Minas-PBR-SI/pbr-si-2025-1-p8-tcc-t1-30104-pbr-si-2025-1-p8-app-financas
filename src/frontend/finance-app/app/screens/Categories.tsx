@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from "react"
 import {
   View,
   Text,
@@ -7,29 +7,29 @@ import {
   ScrollView,
   StyleSheet,
   TouchableOpacity,
-} from 'react-native'
-import { useFocusEffect } from '@react-navigation/native'
-import { Formik } from 'formik'
-import * as Yup from 'yup'
-import colors from '../utils/colors'
-import { useAuth } from '../context/AuthContext'
-import { getRequest, postRequest, putRequest } from '../services/apiServices'
-import { Category } from '../services/types'
-import { Header } from '../components/Header'
-import ErrorMessageFormik from '../components/formik/ErrorMessageFormik'
-import { CategoryItem } from '../components/category/CategoryItem'
-import { EditCategoryModal } from '../components/category/editCategoryModal'
-import ConfirmModal from '../components/modals/ConfirmModal'
-import CustomTextInput from '../components/formik/CustomTextInput2'
-import SuccessModal from '../components/modals/SuccessModal'
-import ErrorModal from '../components/modals/ErrorModal'
+} from "react-native"
+import { useFocusEffect } from "@react-navigation/native"
+import { Formik } from "formik"
+import * as Yup from "yup"
+import colors from "../utils/colors"
+import { useAuth } from "../context/AuthContext"
+import { getRequest, postRequest, putRequest } from "../services/apiServices"
+import { Category } from "../services/types"
+import { Header } from "../components/Header"
+import ErrorMessageFormik from "../components/formik/ErrorMessageFormik"
+import { CategoryItem } from "../components/category/CategoryItem"
+import { EditCategoryModal } from "../components/category/editCategoryModal"
+import ConfirmModal from "../components/modals/ConfirmModal"
+import CustomTextInput from "../components/formik/CustomTextInput2"
+import SuccessModal from "../components/modals/SuccessModal"
+import ErrorModal from "../components/modals/ErrorModal"
 
 export const Categories = () => {
   const { userId } = useAuth()
   const formRef = useRef<any>(null)
   const [categories, setCategories] = useState<Category[]>([])
   const [editingCategory, setEditingCategory] = useState<Category | null>(null)
-  const [newCategoryName, setNewCategoryName] = useState('')
+  const [newCategoryName, setNewCategoryName] = useState("")
   const [modalVisible, setModalVisible] = useState(false)
   const [confirmModalVisible, setConfirmModalVisible] = useState(false)
   const [categoryToToggle, setCategoryToToggle] = useState<Category | null>(
@@ -37,8 +37,8 @@ export const Categories = () => {
   )
 
   const [successModalVisible, setSuccessModalVisible] = useState(false)
-  const [successModalText, setSuccessModalText] = useState('')
-  const [errorModalText, setErrorModalText] = useState('')
+  const [successModalText, setSuccessModalText] = useState("")
+  const [errorModalText, setErrorModalText] = useState("")
   const [errorModalVisible, setErrorModalVisible] = useState(false)
 
   const fetchCategories = async () => {
@@ -46,7 +46,7 @@ export const Categories = () => {
       const data: Category[] = await getRequest(`category/byuser/${userId}`)
       setCategories(data)
     } catch (error) {
-      console.error('Erro ao buscar categorias:', error)
+      console.error("Erro ao buscar categorias:", error)
     }
   }
 
@@ -67,13 +67,13 @@ export const Categories = () => {
     { resetForm }: any,
   ) => {
     try {
-      await postRequest('category', { name: values.category, userId })
+      await postRequest("category", { name: values.category, userId })
       setSuccessModalVisible(true)
-      setSuccessModalText('Categoria criada com sucesso!')
+      setSuccessModalText("Categoria criada com sucesso!")
       resetForm()
       fetchCategories()
     } catch (error: any) {
-      setErrorModalText(error.message || 'Erro ao criar categoria')
+      setErrorModalText(error.message || "Erro ao criar categoria")
       setErrorModalVisible(true)
     }
   }
@@ -90,11 +90,11 @@ export const Categories = () => {
         userId,
       })
       setSuccessModalVisible(true)
-      setSuccessModalText('Categoria atualizada com sucesso!')
+      setSuccessModalText("Categoria atualizada com sucesso!")
       fetchCategories()
     } catch (error: any) {
       setErrorModalVisible(true)
-      setErrorModalText(error.message || 'Erro ao editar categoria')
+      setErrorModalText(error.message || "Erro ao editar categoria")
     }
     setModalVisible(false)
   }
@@ -114,11 +114,11 @@ export const Categories = () => {
       setConfirmModalVisible(false)
       setCategoryToToggle(null)
       fetchCategories()
-      setSuccessModalText('Categoria atualizada com sucesso!')
+      setSuccessModalText("Categoria atualizada com sucesso!")
       setSuccessModalVisible(true)
     } catch (error: any) {
       setErrorModalVisible(true)
-      setErrorModalText(error.message || 'Erro ao editar categoria')
+      setErrorModalText(error.message || "Erro ao editar categoria")
     }
   }
 
@@ -128,10 +128,10 @@ export const Categories = () => {
 
       <View style={styles.card}>
         <Formik
-          initialValues={{ category: '' }}
+          initialValues={{ category: "" }}
           validationSchema={Yup.object({
             category: Yup.string().required(
-              'É obrigatório informar o nome da categoria',
+              "É obrigatório informar o nome da categoria",
             ),
           })}
           onSubmit={handleSave}
@@ -151,7 +151,7 @@ export const Categories = () => {
                 <CustomTextInput
                   label="Nome da nova categoria"
                   value={values.category}
-                  onChangeText={handleChange('category')}
+                  onChangeText={handleChange("category")}
                 />
 
                 <ErrorMessageFormik
@@ -177,7 +177,7 @@ export const Categories = () => {
         ListHeaderComponent={
           <>
             {categories.length === 0 && (
-              <View style={{ alignItems: 'center', marginTop: 20 }}>
+              <View style={{ alignItems: "center", marginTop: 20 }}>
                 <Text style={{ fontSize: 16, color: colors.gray }}>
                   Nenhuma categoria encontrada.
                 </Text>
@@ -210,9 +210,9 @@ export const Categories = () => {
         visible={confirmModalVisible}
         onCancel={() => setConfirmModalVisible(false)}
         onConfirm={handleConfirmToggle}
-        title={`${categoryToToggle?.active ? 'Desativar' : 'Ativar'} Categoria`}
+        title={`${categoryToToggle?.active ? "Desativar" : "Ativar"} Categoria`}
         message={`Deseja realmente ${
-          categoryToToggle?.active ? 'desativar' : 'ativar'
+          categoryToToggle?.active ? "desativar" : "ativar"
         } a categoria "${categoryToToggle?.name}"?`}
       />
 
@@ -235,9 +235,9 @@ export const Categories = () => {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f1f1f1' },
+  container: { flex: 1, backgroundColor: "#f1f1f1" },
   card: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     marginTop: -20,
     marginHorizontal: 16,
     borderRadius: 12,
@@ -250,15 +250,15 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 8,
-    alignSelf: 'flex-end',
+    alignSelf: "flex-end",
     marginTop: 12,
   },
-  saveText: { color: '#fff', fontWeight: '600' },
+  saveText: { color: "#fff", fontWeight: "600" },
   listTitle: {
     fontSize: 18,
     marginLeft: 16,
     marginVertical: 8,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 })
 

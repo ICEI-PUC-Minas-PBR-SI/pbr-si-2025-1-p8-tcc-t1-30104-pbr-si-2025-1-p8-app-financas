@@ -1,8 +1,8 @@
-import React from 'react'
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
-import Ionicons from 'react-native-vector-icons/Ionicons'
-import { useNavigation } from '@react-navigation/native'
-import colors from '../utils/colors'
+import React from "react"
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native"
+import Ionicons from "react-native-vector-icons/Ionicons"
+import { useNavigation } from "@react-navigation/native"
+import colors from "../utils/colors"
 
 interface HeaderProps {
   title: string
@@ -37,17 +37,17 @@ const styles = StyleSheet.create({
     paddingTop: 40,
     paddingBottom: 20,
     paddingHorizontal: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     marginBottom: 15,
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   title: {
     color: colors.white,
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 })

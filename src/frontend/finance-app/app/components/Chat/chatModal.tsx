@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from "react"
 import {
   View,
   Modal,
@@ -8,10 +8,13 @@ import {
   FlatList,
   ActivityIndicator,
   StyleSheet,
-} from 'react-native'
-import { Ionicons } from '@expo/vector-icons'
-import { sendMessageToAI } from '../../services/chatService'
-import colors from '../../utils/colors'
+  Keyboard,
+} from "react-native"
+
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons"
+import { MessageItem } from "../../services/types"
+import { sendMessageToAI } from "../../services/chatService"
+import colors from "../../utils/colors"
 
 interface ChatModalProps {
   visible: boolean
@@ -19,50 +22,97 @@ interface ChatModalProps {
 }
 
 const ChatModal: React.FC<ChatModalProps> = ({ visible, onClose }) => {
-  const [messages, setMessages] = useState([
-    { id: '1', text: 'Olá! Como posso te ajudar?', sender: 'bot' },
-  ])
+  const flatListRef = useRef<FlatList>(null)
 
-  const [inputText, setInputText] = useState('')
+  const [messages, setMessages] = useState([
+    { id: "1", text: "Olá! Como posso te ajudar?", sender: "bot" },
+  ])
+  const [inputText, setInputText] = useState("")
   const [loading, setLoading] = useState(false)
+
+  const scrollToEnd = () => {
+    flatListRef.current?.scrollToEnd({ animated: true })
+  }
 
   const sendMessage = async () => {
     if (!inputText.trim()) return
 
-    const newMessage = {
+    const userMessage = {
       id: Date.now().toString(),
       text: inputText,
-      sender: 'user',
+      sender: "user",
     }
-    setMessages(prev => [...prev, newMessage])
 
-    setInputText('')
+    setMessages(prev => [...prev, userMessage])
+    setInputText("")
+    Keyboard.dismiss()
     setLoading(true)
 
     try {
       const response = await sendMessageToAI(inputText)
-      setMessages(prev => [
-        ...prev,
-        { id: Date.now().toString(), text: response, sender: 'bot' },
-      ])
+
+      const botMessage = {
+        id: Date.now().toString(),
+        text: response,
+        sender: "bot",
+      }
+
+      setMessages(prev => [...prev, botMessage])
     } catch (error) {
       setMessages(prev => [
         ...prev,
         {
           id: Date.now().toString(),
-          text: 'Erro ao obter resposta da IA.',
-          sender: 'bot',
+          text: "Erro ao obter resposta do Assistente.",
+          sender: "bot",
         },
       ])
     } finally {
       setLoading(false)
+      setTimeout(scrollToEnd, 100)
     }
+  }
+
+  const renderMessageItem = ({ item }: { item: MessageItem }) => {
+    const isUser = item.sender === "user"
+    return (
+      <View
+        style={[styles.messageRow, isUser ? styles.userRow : styles.botRow]}
+      >
+        {!isUser && (
+          <View style={styles.avatar}>
+            <MaterialCommunityIcons
+              name="robot"
+              size={20}
+              color={colors.white}
+            />
+          </View>
+        )}
+
+        <View
+          style={[
+            styles.messageBubble,
+            isUser ? styles.userMessage : styles.botMessage,
+          ]}
+        >
+          <Text style={isUser ? styles.messageTextUser : styles.messageTextBot}>
+            {item.text}
+          </Text>
+        </View>
+
+        {isUser && (
+          <View style={styles.avatarUser}>
+            <Ionicons name="person" size={20} color={colors.white} />
+          </View>
+        )}
+      </View>
+    )
   }
 
   return (
     <Modal
       animationType="slide"
-      transparent={true}
+      transparent
       visible={visible}
       onRequestClose={onClose}
     >
@@ -78,34 +128,18 @@ const ChatModal: React.FC<ChatModalProps> = ({ visible, onClose }) => {
           </View>
 
           <FlatList
+            ref={flatListRef}
             data={messages}
             keyExtractor={item => item.id}
-            renderItem={({ item }) => (
-              <View
-                style={[
-                  styles.messageBubble,
-                  item.sender === 'user'
-                    ? styles.userMessage
-                    : styles.botMessage,
-                ]}
-              >
-                <Text
-                  style={[
-                    item.sender === 'user'
-                      ? styles.messageTextUser
-                      : styles.messageTextBot,
-                  ]}
-                >
-                  {item.text}
-                </Text>
-              </View>
-            )}
+            renderItem={renderMessageItem}
+            onContentSizeChange={scrollToEnd}
+            onLayout={scrollToEnd}
           />
 
           {loading && (
             <ActivityIndicator
               size="small"
-              color="#000000"
+              color="#000"
               style={{ marginVertical: 10 }}
             />
           )}
@@ -130,40 +164,39 @@ const ChatModal: React.FC<ChatModalProps> = ({ visible, onClose }) => {
 const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
-    justifyContent: 'flex-end',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: "flex-end",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContent: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderTopLeftRadius: 15,
     borderTopRightRadius: 15,
     padding: 16,
-    maxHeight: '80%',
+    maxHeight: "65%",
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: 10,
   },
   headerText: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   messageBubble: {
     padding: 10,
     borderRadius: 10,
     marginBottom: 5,
-    maxWidth: '80%',
-    alignSelf: 'flex-start',
+    maxWidth: "80%",
+    alignSelf: "flex-start",
   },
   userMessage: {
     backgroundColor: colors.primary,
-    alignSelf: 'flex-end',
+    alignSelf: "flex-end",
   },
   botMessage: {
     backgroundColor: colors.backgroundChat,
-    color: colors.black,
   },
   messageTextUser: {
     color: colors.white,
@@ -172,8 +205,8 @@ const styles = StyleSheet.create({
     color: colors.black,
   },
   inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginTop: 10,
   },
   input: {
@@ -187,6 +220,38 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
     borderRadius: 20,
     padding: 10,
+  },
+  messageRow: {
+    flexDirection: "row",
+    alignItems: "flex-end",
+    marginBottom: 8,
+  },
+  userRow: {
+    justifyContent: "flex-end",
+    alignSelf: "flex-end",
+  },
+  botRow: {
+    justifyContent: "flex-start",
+    alignSelf: "flex-start",
+  },
+  avatar: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: colors.primary,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 6,
+  },
+  avatarUser: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: colors.primary,
+    justifyContent: "center",
+    alignItems: "center",
+    marginLeft: 6,
+    marginBottom: 5,
   },
 })
 

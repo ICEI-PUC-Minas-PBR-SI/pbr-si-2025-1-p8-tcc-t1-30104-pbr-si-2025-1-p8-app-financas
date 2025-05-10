@@ -1,6 +1,6 @@
-import React from 'react'
-import { Modal, View, Text, StyleSheet, TouchableOpacity } from 'react-native'
-import colors from '../../utils/colors'
+import React from "react"
+import { Modal, View, Text, StyleSheet, TouchableOpacity } from "react-native"
+import colors from "../../utils/colors"
 
 interface SuccessModalProps {
   visible: boolean
@@ -12,10 +12,10 @@ interface SuccessModalProps {
 
 const SuccessModal = ({
   visible,
-  title = 'Sucesso',
+  title = "Sucesso!",
   message,
   onClose,
-  buttonText = 'OK',
+  buttonText = "OK",
 }: SuccessModalProps) => {
   return (
     <Modal
@@ -42,30 +42,30 @@ const SuccessModal = ({
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
   },
   modalContent: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderRadius: 12,
     padding: 24,
-    width: '80%',
+    width: "92%",
   },
   title: {
-    fontSize: 20,
-    fontWeight: 'bold',
+    fontSize: 24,
+    fontWeight: "bold",
     marginBottom: 12,
-    textAlign: 'center',
+    textAlign: "center",
   },
   message: {
     fontSize: 16,
-    textAlign: 'left',
+    textAlign: "left",
     marginBottom: 20,
   },
   buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
+    flexDirection: "row",
+    justifyContent: "flex-end",
   },
   button: {
     backgroundColor: colors.primaryBackground,
@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: colors.white,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     fontSize: 16,
   },
 })

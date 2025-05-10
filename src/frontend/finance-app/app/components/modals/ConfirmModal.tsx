@@ -1,6 +1,6 @@
-import React from 'react'
-import { Modal, View, Text, StyleSheet, TouchableOpacity } from 'react-native'
-import colors from '../../utils/colors'
+import React from "react"
+import { Modal, View, Text, StyleSheet, TouchableOpacity } from "react-native"
+import colors from "../../utils/colors"
 
 type ConfirmModalProps = {
   visible: boolean
@@ -18,8 +18,8 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
   onConfirm,
   title,
   message,
-  confirmText = 'Confirmar',
-  cancelText = 'Cancelar',
+  confirmText = "Confirmar",
+  cancelText = "Cancelar",
 }) => {
   return (
     <Modal visible={visible} transparent animationType="fade">
@@ -44,20 +44,20 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.4)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(0,0,0,0.4)",
+    justifyContent: "center",
+    alignItems: "center",
   },
   modal: {
-    width: '80%',
-    backgroundColor: '#fff',
+    width: "80%",
+    backgroundColor: "#fff",
     borderRadius: 12,
     padding: 20,
     elevation: 10,
   },
   title: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 10,
   },
   message: {
@@ -65,8 +65,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   actions: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
+    flexDirection: "row",
+    justifyContent: "flex-end",
   },
   cancelButton: {
     backgroundColor: colors.error,
@@ -76,18 +76,18 @@ const styles = StyleSheet.create({
     borderRadius: 6,
   },
   confirmButton: {
-    backgroundColor: '#2c8f8f',
+    backgroundColor: "#2c8f8f",
     paddingVertical: 8,
     paddingHorizontal: 16,
     borderRadius: 6,
   },
   cancelText: {
     color: colors.white,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   confirmText: {
     color: colors.white,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 })
 

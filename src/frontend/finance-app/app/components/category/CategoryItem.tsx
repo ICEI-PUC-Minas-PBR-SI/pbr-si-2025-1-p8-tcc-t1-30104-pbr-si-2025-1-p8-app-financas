@@ -1,7 +1,7 @@
-import React from 'react'
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
-import { Category } from '../../services/types'
-import colors from '../../utils/colors'
+import React from "react"
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native"
+import { Category } from "../../services/types"
+import colors from "../../utils/colors"
 
 interface Props {
   category: Category
@@ -16,7 +16,7 @@ export const CategoryItem: React.FC<Props> = ({
 }) => (
   <View style={styles.container}>
     <Text style={[styles.name, !category.active && styles.inactiveText]}>
-      {category.name} {category.active ? '' : '(Desativada)'}
+      {category.name} {category.active ? "" : "(Desativada)"}
     </Text>
     <View style={styles.actions}>
       <TouchableOpacity style={styles.edit} onPress={() => onEdit(category)}>
@@ -27,7 +27,7 @@ export const CategoryItem: React.FC<Props> = ({
         onPress={() => onToggleActive(category)}
       >
         <Text style={styles.text}>
-          {category.active ? 'Desativar' : 'Reativar'}
+          {category.active ? "Desativar" : "Reativar"}
         </Text>
       </TouchableOpacity>
     </View>
@@ -36,18 +36,18 @@ export const CategoryItem: React.FC<Props> = ({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     padding: 12,
     borderRadius: 8,
     marginBottom: 10,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     elevation: 2,
-    width: '95%',
+    width: "95%",
   },
   name: { fontSize: 14, flex: 1 },
-  actions: { flexDirection: 'row', gap: 8 },
+  actions: { flexDirection: "row", gap: 8 },
   edit: {
     backgroundColor: colors.primary,
     paddingVertical: 6,
@@ -68,8 +68,8 @@ const styles = StyleSheet.create({
     borderRadius: 6,
   },
   text: {
-    color: '#fff',
-    fontWeight: '600',
+    color: "#fff",
+    fontWeight: "600",
     fontSize: 12,
   },
   inactive: {
@@ -77,6 +77,6 @@ const styles = StyleSheet.create({
   },
   inactiveText: {
     color: colors.gray,
-    fontStyle: 'italic',
+    fontStyle: "italic",
   },
 })

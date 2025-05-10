@@ -1,5 +1,5 @@
-import React from 'react'
-import { Text, StyleSheet, TextStyle } from 'react-native'
+import React from "react"
+import { Text, StyleSheet, TextStyle } from "react-native"
 
 interface ErrorMessageProps {
   error?: string
@@ -12,7 +12,7 @@ const ErrorMessage: React.FC<ErrorMessageProps> = ({ error }) => {
 
 const styles = StyleSheet.create({
   error: {
-    color: 'red',
+    color: "red",
     fontSize: 12,
     marginBottom: 0,
   } as TextStyle,

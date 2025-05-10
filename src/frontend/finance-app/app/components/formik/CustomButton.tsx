@@ -1,7 +1,7 @@
-import React from 'react'
-import { StyleSheet, ViewStyle, TextStyle } from 'react-native'
-import { Button } from 'react-native-paper'
-import colors from '../../utils/colors'
+import React from "react"
+import { StyleSheet, ViewStyle, TextStyle } from "react-native"
+import { Button } from "react-native-paper"
+import colors from "../../utils/colors"
 
 interface CustomButtonProps {
   onPress: () => void

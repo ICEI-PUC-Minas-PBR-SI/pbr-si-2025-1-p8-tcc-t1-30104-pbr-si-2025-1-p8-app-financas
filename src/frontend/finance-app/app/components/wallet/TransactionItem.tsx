@@ -1,15 +1,15 @@
-import React from 'react'
-import { View, Text, StyleSheet } from 'react-native'
-import Icon from 'react-native-vector-icons/Feather'
-import { formatDateBR, formatCurrency } from '../../utils/format'
-import colors from '../../utils/colors'
+import React from "react"
+import { View, Text, StyleSheet } from "react-native"
+import Icon from "react-native-vector-icons/Feather"
+import { formatDateBR, formatCurrency } from "../../utils/format"
+import colors from "../../utils/colors"
 
 interface TransactionItemProps {
   title: string
   date: string
   value: number
   categoryName?: string
-  type: 'entrada' | 'saida'
+  type: "entrada" | "saida"
 }
 
 export const TransactionItem: React.FC<TransactionItemProps> = ({
@@ -19,12 +19,12 @@ export const TransactionItem: React.FC<TransactionItemProps> = ({
   type,
   categoryName,
 }) => {
-  const isIncome = type === 'entrada'
+  const isIncome = type === "entrada"
 
   return (
     <View style={styles.item}>
       <Icon
-        name={isIncome ? 'arrow-up-circle' : 'arrow-down-circle'}
+        name={isIncome ? "arrow-up-circle" : "arrow-down-circle"}
         size={26}
         color={isIncome ? colors.greenLight : colors.error}
         style={styles.icon}
@@ -32,7 +32,7 @@ export const TransactionItem: React.FC<TransactionItemProps> = ({
       <View style={styles.details}>
         <Text style={styles.title}>{title}</Text>
         <Text style={{ color: colors.textSecondary, fontSize: 12 }}>
-          {categoryName}{' '}
+          {categoryName}{" "}
         </Text>
         <Text style={styles.date}>{date}</Text>
       </View>
@@ -42,7 +42,9 @@ export const TransactionItem: React.FC<TransactionItemProps> = ({
           { color: isIncome ? colors.success : colors.error },
         ]}
       >
-        {isIncome ? `+ R$ ${Math.abs(value)}` : `- R$ ${Math.abs(value)}`}
+        {isIncome
+          ? `+ R$ ${value.toFixed(2)}`
+          : `- R$ ${Math.abs(value).toFixed(2)}`}
       </Text>
     </View>
   )
@@ -50,10 +52,10 @@ export const TransactionItem: React.FC<TransactionItemProps> = ({
 
 const styles = StyleSheet.create({
   item: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     padding: 12,
-    borderBottomColor: '#eee',
+    borderBottomColor: "#eee",
     borderBottomWidth: 1,
   },
   icon: {
@@ -63,16 +65,16 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   title: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
     fontSize: 16,
   },
   date: {
     fontSize: 12,
-    color: '#888',
-    fontWeight: 'bold',
+    color: "#888",
+    fontWeight: "bold",
   },
   value: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
     fontSize: 16,
   },
 })

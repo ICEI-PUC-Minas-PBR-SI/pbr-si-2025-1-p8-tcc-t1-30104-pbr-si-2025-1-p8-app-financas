@@ -2,7 +2,7 @@ export interface Transaction {
   id?: number
   userId: number
   categoryId: number
-  type: 'entrada' | 'saida'
+  type: "entrada" | "saida"
   title: string
   amount: number
   date: string
@@ -22,4 +22,10 @@ export interface Category {
   id: number
   name: string
   active: boolean
+}
+
+export interface MessageItem {
+  id: string
+  text: string
+  sender: "user" | "bot"
 }

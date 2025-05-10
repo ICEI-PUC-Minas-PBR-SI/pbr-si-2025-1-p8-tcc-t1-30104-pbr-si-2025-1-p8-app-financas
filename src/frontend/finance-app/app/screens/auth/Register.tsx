@@ -1,25 +1,25 @@
-import React, { useState } from 'react'
-import { View, Text, StyleSheet } from 'react-native'
-import { Formik } from 'formik'
-import * as Yup from 'yup'
-import { useAuth } from '../../context/AuthContext'
-import CustomTextInput from '../../components/formik/CustomTextInput'
-import ErrorMessageFormik from '../../components/formik/ErrorMessageFormik'
-import CustomButton from '../../components/formik/CustomButton'
-import colors from '../../utils/colors'
-import { TextInput } from 'react-native-paper'
-import { useNavigation } from '@react-navigation/native'
-import SuccessModal from '../../components/modals/SuccessModal'
+import React, { useState } from "react"
+import { View, Text, StyleSheet } from "react-native"
+import { Formik } from "formik"
+import * as Yup from "yup"
+import { useAuth } from "../../context/AuthContext"
+import CustomTextInput from "../../components/formik/CustomTextInput"
+import ErrorMessageFormik from "../../components/formik/ErrorMessageFormik"
+import CustomButton from "../../components/formik/CustomButton"
+import colors from "../../utils/colors"
+import { TextInput } from "react-native-paper"
+import { useNavigation } from "@react-navigation/native"
+import SuccessModal from "../../components/modals/SuccessModal"
 
 const validationSchema = Yup.object().shape({
-  name: Yup.string().required('Nome completo é obrigatório'),
-  email: Yup.string().email('Email inválido').required('Email é obrigatório'),
+  name: Yup.string().required("Nome completo é obrigatório"),
+  email: Yup.string().email("Email inválido").required("Email é obrigatório"),
   password: Yup.string()
-    .min(6, 'A senha deve ter pelo menos 6 caracteres')
-    .required('Senha é obrigatória'),
+    .min(6, "A senha deve ter pelo menos 6 caracteres")
+    .required("Senha é obrigatória"),
   confirmPassword: Yup.string()
-    .oneOf([Yup.ref('password'), undefined], 'As senhas não coincidem')
-    .required('Confirmação de senha é obrigatória'),
+    .oneOf([Yup.ref("password"), undefined], "As senhas não coincidem")
+    .required("Confirmação de senha é obrigatória"),
 })
 
 export default function Signup() {
@@ -58,10 +58,10 @@ export default function Signup() {
       </View>
       <Formik
         initialValues={{
-          name: '',
-          email: '',
-          password: '',
-          confirmPassword: '',
+          name: "",
+          email: "",
+          password: "",
+          confirmPassword: "",
         }}
         validationSchema={validationSchema}
         onSubmit={register}
@@ -78,8 +78,8 @@ export default function Signup() {
             <CustomTextInput
               label="Nome completo"
               value={values.name}
-              onChangeText={handleChange('name')}
-              onBlur={handleBlur('name')}
+              onChangeText={handleChange("name")}
+              onBlur={handleBlur("name")}
             />
             <ErrorMessageFormik
               error={touched.name ? errors.name : undefined}
@@ -88,8 +88,8 @@ export default function Signup() {
             <CustomTextInput
               label="Email"
               value={values.email}
-              onChangeText={handleChange('email')}
-              onBlur={handleBlur('email')}
+              onChangeText={handleChange("email")}
+              onBlur={handleBlur("email")}
               keyboardType="email-address"
             />
             <ErrorMessageFormik
@@ -99,8 +99,8 @@ export default function Signup() {
             <TextInput
               label="Senha"
               value={values.password}
-              onChangeText={handleChange('password')}
-              onBlur={handleBlur('password')}
+              onChangeText={handleChange("password")}
+              onBlur={handleBlur("password")}
               secureTextEntry={secureText}
               mode="outlined"
               style={styles.input}
@@ -108,7 +108,7 @@ export default function Signup() {
               activeOutlineColor="#007BFF"
               right={
                 <TextInput.Icon
-                  icon={secureText ? 'eye-off' : 'eye'}
+                  icon={secureText ? "eye-off" : "eye"}
                   onPress={() => setSecureText(!secureText)}
                 />
               }
@@ -121,8 +121,8 @@ export default function Signup() {
             <TextInput
               label="Confirme a Senha"
               value={values.confirmPassword}
-              onChangeText={handleChange('confirmPassword')}
-              onBlur={handleBlur('confirmPassword')}
+              onChangeText={handleChange("confirmPassword")}
+              onBlur={handleBlur("confirmPassword")}
               secureTextEntry={secureTextConfirm}
               mode="outlined"
               style={styles.input}
@@ -130,7 +130,7 @@ export default function Signup() {
               activeOutlineColor="#007BFF"
               right={
                 <TextInput.Icon
-                  icon={secureTextConfirm ? 'eye-off' : 'eye'}
+                  icon={secureTextConfirm ? "eye-off" : "eye"}
                   onPress={() => setSecureTextConfirm(!secureTextConfirm)}
                 />
               }
@@ -162,29 +162,29 @@ export default function Signup() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
     backgroundColor: colors.background,
   },
   logoContainer: {
     marginBottom: 30,
-    alignItems: 'center',
+    alignItems: "center",
   },
   logoText: {
     fontSize: 30,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     color: colors.primary,
-    textAlign: 'center',
+    textAlign: "center",
   },
   form: {
     gap: 5,
-    width: '70%',
+    width: "70%",
   },
   input: {
     marginTop: 5,
     marginBottom: 2,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: "#f0f0f0",
     borderRadius: 8,
     height: 50,
   },

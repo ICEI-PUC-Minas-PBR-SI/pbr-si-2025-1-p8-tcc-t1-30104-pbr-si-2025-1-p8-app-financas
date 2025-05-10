@@ -1,7 +1,7 @@
-import React from 'react'
-import { TouchableOpacity, StyleSheet } from 'react-native'
-import { Ionicons } from '@expo/vector-icons'
-import colors from '../../utils/colors'
+import React from "react"
+import { TouchableOpacity, StyleSheet } from "react-native"
+import { Ionicons } from "@expo/vector-icons"
+import colors from "../../utils/colors"
 
 interface ChatButtonProps {
   onPress: () => void
@@ -17,18 +17,19 @@ const ChatButton: React.FC<ChatButtonProps> = ({ onPress }) => {
 
 const styles = StyleSheet.create({
   chatButton: {
-    position: 'absolute',
-    bottom: 20,
+    position: "absolute",
+    top: 30,
     right: 20,
     backgroundColor: colors.primary,
     width: 60,
     height: 60,
     borderRadius: 30,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     shadowColor: colors.black,
     shadowOpacity: 0.3,
     shadowOffset: { width: 0, height: 2 },
+    opacity: 0.99,
   },
 })
 
