@@ -1,14 +1,14 @@
-import React, { useRef } from 'react'
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
-import { Animated, Dimensions } from 'react-native'
-import Ionicons from 'react-native-vector-icons/Ionicons'
-import { useFocusEffect } from '@react-navigation/native'
-import Wallet from '../screens/Wallet'
-import AddTransaction from '../screens/AddTransaction'
-import MonthlySummary from '../screens/graphs/MonthlySummary'
-import { ProfileStack } from './authStack.routes'
-import StatisticsScreen from '../screens/graphs/Statistics'
-const { width } = Dimensions.get('window')
+import React, { useRef } from "react"
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
+import { Animated, Dimensions } from "react-native"
+import Ionicons from "react-native-vector-icons/Ionicons"
+import { useFocusEffect } from "@react-navigation/native"
+import Wallet from "../screens/wallet/Wallet"
+import AddTransaction from "../screens/transactions/AddTransaction"
+import MonthlySummary from "../screens/graphs/MonthlySummary"
+import { ProfileStack } from "./authStack.routes"
+import StatisticsScreen from "../screens/graphs/Statistics"
+const { width } = Dimensions.get("window")
 
 const Tab = createBottomTabNavigator()
 
@@ -62,32 +62,32 @@ export const TabRoutes = () => {
       screenOptions={({ route }: { route: { name: string } }) => ({
         headerShown: false,
         tabBarIcon: ({ color, size }: { color: string; size: number }) => {
-          let iconName = ''
+          let iconName = ""
 
           switch (route.name) {
-            case 'Carteira':
-              iconName = 'wallet-outline'
+            case "Carteira":
+              iconName = "wallet-outline"
               break
-            case 'Transação':
-              iconName = 'cash-outline'
+            case "Transação":
+              iconName = "cash-outline"
               break
-            case 'Gráficos':
-              iconName = 'bar-chart-outline'
+            case "Gráficos":
+              iconName = "bar-chart-outline"
               break
-            case 'Estatísticas':
-              iconName = 'bar-chart-outline'
+            case "Estatísticas":
+              iconName = "bar-chart-outline"
               break
-            case 'Perfil':
-              iconName = 'person-outline'
+            case "Perfil":
+              iconName = "person-outline"
               break
             default:
-              iconName = 'help-outline'
+              iconName = "help-outline"
           }
 
           return <Ionicons name={iconName} size={size} color={color} />
         },
-        tabBarActiveTintColor: '#007aff',
-        tabBarInactiveTintColor: 'gray',
+        tabBarActiveTintColor: "#007aff",
+        tabBarInactiveTintColor: "gray",
       })}
     >
       <Tab.Screen

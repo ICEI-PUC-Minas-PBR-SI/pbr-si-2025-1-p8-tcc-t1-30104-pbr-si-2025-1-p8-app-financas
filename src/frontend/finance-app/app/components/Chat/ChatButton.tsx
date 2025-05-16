@@ -18,7 +18,7 @@ const ChatButton: React.FC<ChatButtonProps> = ({ onPress }) => {
 const styles = StyleSheet.create({
   chatButton: {
     position: "absolute",
-    top: 30,
+    top: 40,
     right: 20,
     backgroundColor: colors.primary,
     width: 60,

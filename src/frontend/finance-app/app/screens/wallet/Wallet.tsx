@@ -6,14 +6,14 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from "react-native"
-import { WalletCard } from "../components/wallet/WalletCard"
-import { TransactionItem } from "../components/wallet/TransactionItem"
-import ChatButton from "../components/chat/ChatButton"
-import ChatModal from "../components/chat/ChatModal"
-import colors from "../utils/colors"
-import { getRequest } from "../services/apiServices"
-import { useAuth } from "../context/AuthContext"
-import { Transaction, TransactionSummary } from "../services/types"
+import { WalletCard } from "../../components/wallet/WalletCard"
+import { TransactionItem } from "../../components/wallet/TransactionItem"
+import ChatButton from "../../components/chat/ChatButton"
+import ChatModal from "../../components/chat/ChatModal"
+import colors from "../../utils/colors"
+import { getRequest } from "../../services/apiServices"
+import { useAuth } from "../../context/AuthContext"
+import { Transaction, TransactionSummary } from "../../services/types"
 import { useNavigation, useFocusEffect } from "@react-navigation/native"
 
 export const Wallet: React.FC = () => {

@@ -1,7 +1,7 @@
 import React from "react"
 import { View, Text, StyleSheet, TouchableOpacity, Linking } from "react-native"
-import colors from "../utils/colors"
-import CustomButton from "../components/formik/CustomButton"
+import colors from "../../utils/colors"
+import CustomButton from "../../components/formik/CustomButton"
 
 export default function HelpPage() {
   return (

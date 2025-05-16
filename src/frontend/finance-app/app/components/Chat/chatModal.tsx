@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react"
+import React, { useState, useRef, useEffect } from "react"
 import {
   View,
   Modal,
@@ -21,6 +21,11 @@ interface ChatModalProps {
   onClose: () => void
 }
 
+const predefinedQuestions = [
+  "Sou iniciante e quero começar a investir",
+  "Dicas de investimento",
+]
+
 const ChatModal: React.FC<ChatModalProps> = ({ visible, onClose }) => {
   const flatListRef = useRef<FlatList>(null)
 
@@ -30,48 +35,45 @@ const ChatModal: React.FC<ChatModalProps> = ({ visible, onClose }) => {
   const [inputText, setInputText] = useState("")
   const [loading, setLoading] = useState(false)
 
+  useEffect(() => {
+    if (visible) {
+      scrollToEnd()
+    }
+  }, [visible, messages])
+
   const scrollToEnd = () => {
     flatListRef.current?.scrollToEnd({ animated: true })
   }
 
-  const sendMessage = async () => {
-    if (!inputText.trim()) return
+  const sendMessage = async (textToSend: string) => {
+    if (!textToSend.trim()) return
 
-    const userMessage = {
-      id: Date.now().toString(),
-      text: inputText,
-      sender: "user",
-    }
-
+    const userMessage = createMessage(textToSend, "user")
     setMessages(prev => [...prev, userMessage])
     setInputText("")
     Keyboard.dismiss()
     setLoading(true)
 
     try {
-      const response = await sendMessageToAI(inputText)
-
-      const botMessage = {
-        id: Date.now().toString(),
-        text: response,
-        sender: "bot",
-      }
-
+      const response = await sendMessageToAI(textToSend)
+      const botMessage = createMessage(response, "bot")
       setMessages(prev => [...prev, botMessage])
     } catch (error) {
-      setMessages(prev => [
-        ...prev,
-        {
-          id: Date.now().toString(),
-          text: "Erro ao obter resposta do Assistente.",
-          sender: "bot",
-        },
-      ])
+      const errorMessage = createMessage(
+        "Erro ao obter resposta do Assistente.",
+        "bot",
+      )
+      setMessages(prev => [...prev, errorMessage])
     } finally {
       setLoading(false)
-      setTimeout(scrollToEnd, 100)
     }
   }
+
+  const createMessage = (text: string, sender: "user" | "bot") => ({
+    id: Date.now().toString(),
+    text,
+    sender,
+  })
 
   const renderMessageItem = ({ item }: { item: MessageItem }) => {
     const isUser = item.sender === "user"
@@ -79,15 +81,8 @@ const ChatModal: React.FC<ChatModalProps> = ({ visible, onClose }) => {
       <View
         style={[styles.messageRow, isUser ? styles.userRow : styles.botRow]}
       >
-        {!isUser && (
-          <View style={styles.avatar}>
-            <MaterialCommunityIcons
-              name="robot"
-              size={20}
-              color={colors.white}
-            />
-          </View>
-        )}
+        {/* Ícone do Bot à Esquerda */}
+        {!isUser && renderAvatar("bot")}
 
         <View
           style={[
@@ -100,11 +95,22 @@ const ChatModal: React.FC<ChatModalProps> = ({ visible, onClose }) => {
           </Text>
         </View>
 
-        {isUser && (
-          <View style={styles.avatarUser}>
-            <Ionicons name="person" size={20} color={colors.white} />
-          </View>
-        )}
+        {isUser && renderAvatar("user")}
+      </View>
+    )
+  }
+
+  const renderAvatar = (sender: string) => {
+    if (sender === "user") {
+      return (
+        <View style={styles.avatarUser}>
+          <Ionicons name="person" size={20} color={colors.white} />
+        </View>
+      )
+    }
+    return (
+      <View style={styles.avatar}>
+        <MaterialCommunityIcons name="robot" size={20} color={colors.white} />
       </View>
     )
   }
@@ -132,15 +138,27 @@ const ChatModal: React.FC<ChatModalProps> = ({ visible, onClose }) => {
             data={messages}
             keyExtractor={item => item.id}
             renderItem={renderMessageItem}
-            onContentSizeChange={scrollToEnd}
-            onLayout={scrollToEnd}
           />
+
+          {!messages.some(msg => msg.sender === "user") && (
+            <View style={styles.faqContainer}>
+              {predefinedQuestions.map((question, index) => (
+                <TouchableOpacity
+                  key={index}
+                  style={styles.faqButton}
+                  onPress={() => sendMessage(question)}
+                >
+                  <Text style={styles.faqButtonText}>{question}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          )}
 
           {loading && (
             <ActivityIndicator
               size="small"
               color="#000"
-              style={{ marginVertical: 10 }}
+              style={styles.loader}
             />
           )}
 
@@ -151,7 +169,10 @@ const ChatModal: React.FC<ChatModalProps> = ({ visible, onClose }) => {
               value={inputText}
               onChangeText={setInputText}
             />
-            <TouchableOpacity onPress={sendMessage} style={styles.sendButton}>
+            <TouchableOpacity
+              onPress={() => sendMessage(inputText)}
+              style={styles.sendButton}
+            >
               <Ionicons name="send" size={24} color="white" />
             </TouchableOpacity>
           </View>
@@ -189,7 +210,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: 5,
     maxWidth: "80%",
-    alignSelf: "flex-start",
   },
   userMessage: {
     backgroundColor: colors.primary,
@@ -234,24 +254,46 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     alignSelf: "flex-start",
   },
+  avatarUser: {
+    width: 32,
+    height: 32,
+    marginBottom: 5,
+    borderRadius: 16,
+    backgroundColor: colors.primary,
+    justifyContent: "center",
+    alignItems: "center",
+    marginLeft: 6,
+  },
   avatar: {
     width: 32,
     height: 32,
+    marginBottom: 5,
     borderRadius: 16,
     backgroundColor: colors.primary,
     justifyContent: "center",
     alignItems: "center",
     marginRight: 6,
   },
-  avatarUser: {
-    width: 32,
-    height: 32,
+  faqContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "flex-start",
+    marginBottom: 10,
+  },
+  faqButton: {
+    backgroundColor: colors.background,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
     borderRadius: 16,
-    backgroundColor: colors.primary,
-    justifyContent: "center",
-    alignItems: "center",
-    marginLeft: 6,
-    marginBottom: 5,
+    marginRight: 8,
+    marginBottom: 8,
+  },
+  faqButtonText: {
+    color: colors.primary,
+    fontSize: 14,
+  },
+  loader: {
+    marginVertical: 10,
   },
 })
 

@@ -6,9 +6,9 @@ import {
   TouchableOpacity,
   FlatList,
 } from "react-native"
-import { useAuth } from "../context/AuthContext"
+import { useAuth } from "../../context/AuthContext"
 import { Ionicons } from "@expo/vector-icons"
-import colors from "../utils/colors"
+import colors from "../../utils/colors"
 import { useNavigation } from "@react-navigation/native"
 
 const options = [
