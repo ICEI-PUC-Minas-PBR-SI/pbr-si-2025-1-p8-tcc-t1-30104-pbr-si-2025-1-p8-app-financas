@@ -1,29 +1,9 @@
 # Introdução
 
-## Problema
-> Apresentar o contexto do problema que o Trabalho de Conclusão de Curso (TCC) aborda.
+Uma imagem que chocou o mundo, a foto realizada pelo fotógrafo Tuca Vieira em 2004 que retrata a diferença entre a favela Paraisópolis e o Bairro do Morumbi repercutiu mundo a fora e gerou bastantes discussões sobre a desigualdade de renda. Já em 2020, o mesmo fotógrafo sobrevoou o local e retirou uma nova fotografia demostrando que a disparidade social permanece intocada (Coraccini, 2020). Diante deste contexto socioeconômico brasileiro, pode-se dizer que uma das causas da disparidade social se dá pela gestão de ativos financeiros pessoais, exigindo aos cidadãos várias tarefas diferentes, como alinhamento do orçamento mensal, categorização de despesas, criação de objetivos financeiros e orientação de investimento (Bulla, 2024). Dessa forma, desde o distanciamento social, surgido com a pandemia de COVID-19, os aplicativos de organização financeira têm sido adotados com alta demanda (Souza, 2022), substituindo o uso de planilhas e o registro em papel. No entanto, a proliferação desses aplicativos levanta questões sobre a real eficácia e os possíveis riscos que eles podem representar para os usuários (Bulla, 2024). 
 
-> Apresentar o problema. 
+Os principais problemas identificados a respeito dessas aplicações disponíveis no mercado incluem a falta de intuitividade para usuários mais leigos no assunto, a dificuldade de acesso à informação confiável sobre investimentos e riscos de perdas monetárias significativas associadas ao uso dessas ferramentas (Silva et al., 2018; Alves, 2017). Assim, neste trabalho, foi desenvolvido um aplicativo de gestão financeira que integra um chatbot para interação personalizada com o usuário e orientações básicas de gestão e aplicação financeira, a partir dos dados do usuário e a base de dados da API Gemini 2.0 flash. O objetivo do trabalho foi auxiliar o controle financeiro, monitorando gastos, apoiando o planejamento de investimentos e promovendo informações e práticas de gestão financeira pessoal. A justificativa para o desenvolvimento da aplicação foi a crescente demanda por soluções simples (de baixo custo e curva de aprendizado exponencial) e acessíveis (formato de aplicação mobile) que auxiliem indivíduos na gestão de suas finanças e no planejamento de seus investimentos. 
 
-> Descrever a solução proposta para o problema no TCC.
+Na primeira etapa de desenvolvimento, foi feita uma revisão sistemática de artigos que abordaram o mesmo tema de estudo, buscados nas principais bases de dados científicas e instituições de ensino reconhecidas pelo Ministério da Educação (MEC), compondo a fase de pesquisa. Em seguida, foi desenvolvido e divulgado um formulário para identificar o comportamento de gestão financeira dos potenciais usuários, além de ter contribuído para o levantamento de recursos e funcionalidades para o sistema. Após a etapa de requisitos, iniciou-se a construção da aplicação baseando-se nos conceitos de desenvolvimento e boas práticas de programação, utilizando-se da metodologia ágil Scrum e empregando as tecnologias React Native para a interface, Nest.js para o backend e MySQL para o armazenamento de dados. O processo de avaliação foi realizado por meio da aplicação de testes de segurança e responsividade entre os dados informados e gerados.  
 
-> Descrever o contexto em que a solução é empregada, se houver: empresa, tecnologias, etc. 
-
-> Descrever a metodologia: como Design Thinking, Scrum, etc.
-
-## Objetivos
-
-> Descrever o objetivo do trabalho.
-
-## Justificativa
-
-> Descreva a importância ou a motivação para trabalhar com o problema escolhido. 
-
-> Indique as razões pelas quais você escolheu seu objetivo.
- 
-> A equipe de trabalho pode fazer uso de questionários, entrevistas e dados estatísticos, que podem ser apresentados, com o objetivo de esclarecer detalhes do problema abordado no TCC.
-
-## Público-Alvo
-
-> Descreva o perfil do(s) grupo(s) de pessoas beneficiadas pelo TCC. A ideia é, dentro do possível, destacar: conhecimentos prévios, relação com a tecnologia, relações
-hierárquicas, relação com o problema tratado no TCC, etc.
+Os resultados obtidos demonstraram que o aplicativo é seguro em questão de privacidade dos dados, escalável para projetos futuros e forneceu as exigências principais levantadas pelo próprio grupo alvo. Ademais, a estratégia de integrar um chatbot auxilia em potenciais dúvidas dos usuários a conceitos básicos e até mais específicos quanto a termos relacionados a aplicações financeiras, de forma a contribuir para o início do hábito de controle e gestão financeira individual de forma acessível e de uso simplificado. De forma sucinta, o aplicativo Gestão no Bolso integra um chatbot para orientações personalizadas sobre estratégias de investimento, contribuindo para a tomada de decisão e para a democratização do acesso à educação financeira. As orientações de investimento são fundamentadas nos dados de cada usuário. A aplicação também ajuda no alinhamento do orçamento mensal, na categorização de despesas e na criação de objetivos financeiros. 
