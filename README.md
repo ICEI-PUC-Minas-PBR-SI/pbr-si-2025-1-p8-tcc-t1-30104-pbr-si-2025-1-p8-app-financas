@@ -20,12 +20,13 @@ Os membros da equipe são:
 
 # Estrutura do Projeto
 
-1. [Contexto](./docs/1-Contexto.md)
-2. [Especificação do Projeto](./docs/2-Especificação.md)
-4. [Gerenciamento do Projeto](./docs/4-Gerenciamento-Projeto.md)
-5. [Implementação](./docs/5-Implementação.md)
-6. [Referências](./docs/6-Referências.md)
-7. [Apresentação do trabalho](./docs/apresentacao/README.md) 
+1. [Introdução](./docs/1-Introdução.md)
+2. [Trabalhos Relacionados](./docs/2-TrabalhosRelacionados.md)
+4. [Especificação](./docs/3-Especificação.md)
+4. [Metodologia](./docs/4-Metodologia.md)
+5. [Resultado](./docs/5-Resultado.md)
+6. [Conclusão](./docs/6-Conclusão.md)
+7. [Referências](./docs/7-referências.md) 
 
 
 
