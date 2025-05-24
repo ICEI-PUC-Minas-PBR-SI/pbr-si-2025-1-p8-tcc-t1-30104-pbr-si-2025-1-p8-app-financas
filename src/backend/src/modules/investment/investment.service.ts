@@ -1,6 +1,6 @@
 import { ConflictException, Injectable } from "@nestjs/common";
 import axios from "axios";
-import { SimulateInvestmentDto } from "./dto/investment.dto";
+import { SimulateInvestmentDto, SimulateOnlyDto } from "./dto/investment.dto";
 import { PrismaService } from "src/prisma.service";
 
 @Injectable()
@@ -26,10 +26,13 @@ export class InvestmentService {
 
   async simulateInvestment(dto: SimulateInvestmentDto, userId: string) {
     const { type } = dto;
-
     if (type != "selic" && type != "cdi" && type != "ipca") {
       throw new ConflictException("Tipo de investimento inválido");
     }
+    const today = new Date();
+    const formattedDate = `${String(today.getDate()).padStart(2, "0")}/${String(
+      today.getMonth() + 1
+    ).padStart(2, "0")}/${today.getFullYear()}`;
 
     const response = await axios.get(this.BASE_URL + `/${type}`);
 
@@ -58,14 +61,37 @@ export class InvestmentService {
         monthlyContribution: dto.monthlyContribution,
         totalValue: totalValue,
         rateValue: rateValue,
-        date: dto.date,
+        date: formattedDate,
       },
     });
 
     return investment;
   }
 
-  async getValue(dto: SimulateInvestmentDto, rateValue: number) {
+  async simulateOnly(dto: SimulateOnlyDto) {
+    const { type } = dto;
+
+    if (type != "selic" && type != "cdi" && type != "ipca") {
+      throw new ConflictException("Tipo de investimento inválido");
+    }
+
+    const response = await axios.get(this.BASE_URL + `/${type}`);
+
+    const rateValue = response.data.valor;
+
+    const totalValue = await this.getValue(dto, rateValue);
+
+    return {
+      ...dto,
+      rateValue,
+      totalValue,
+    };
+  }
+
+  async getValue(
+    dto: { amount: number; monthlyContribution: number; months: number },
+    rateValue: number
+  ) {
     const monthlyRate = Math.pow(1 + rateValue / 100, 1 / 12) - 1;
 
     const initialAmount = dto.amount * Math.pow(1 + monthlyRate, dto.months);
@@ -77,5 +103,15 @@ export class InvestmentService {
     const finalValue = initialAmount + contributionAmount;
 
     return Number(finalValue.toFixed(2));
+  }
+
+  async deleteInvestment(id: string) {
+    const investment = await this.prisma.investment.delete({
+      where: {
+        id: parseInt(id),
+      },
+    });
+
+    return investment;
   }
 }

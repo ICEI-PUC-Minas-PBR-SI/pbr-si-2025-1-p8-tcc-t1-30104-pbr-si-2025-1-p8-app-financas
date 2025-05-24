@@ -13,8 +13,8 @@ import ChatModal from "../../components/chat/ChatModal"
 import colors from "../../utils/colors"
 import { getRequest } from "../../services/apiServices"
 import { useAuth } from "../../context/AuthContext"
-import { Transaction, TransactionSummary } from "../../services/types"
-import { useNavigation, useFocusEffect } from "@react-navigation/native"
+import { Transaction, TransactionSummary } from "../../utils/types"
+import { useFocusEffect } from "@react-navigation/native"
 
 export const Wallet: React.FC = () => {
   const { userId } = useAuth()
@@ -54,7 +54,7 @@ export const Wallet: React.FC = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Meu bolso</Text>
+        <Text style={styles.title}>Gestão no Bolso</Text>
       </View>
 
       <View style={styles.cardWrapper}>
@@ -65,7 +65,7 @@ export const Wallet: React.FC = () => {
         />
       </View>
 
-      <Text style={styles.historyTitle}>Histórico</Text>
+      <Text style={styles.historyTitle}>Histórico de Transações</Text>
 
       {transactions.length === 0 && (
         <View style={{ alignItems: "center", marginTop: 20 }}>
@@ -122,9 +122,9 @@ const styles = StyleSheet.create({
   },
   title: {
     color: "#fff",
-    fontSize: 34,
+    fontSize: 30,
     fontWeight: "bold",
-    marginTop: 40,
+    marginTop: 45,
     marginLeft: 16,
   },
 })

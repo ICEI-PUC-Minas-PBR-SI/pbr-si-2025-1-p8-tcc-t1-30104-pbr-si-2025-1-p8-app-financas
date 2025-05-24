@@ -1,6 +1,6 @@
 import React from "react"
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native"
-import { Category } from "../../services/types"
+import { Category } from "../../utils/types"
 import colors from "../../utils/colors"
 
 interface Props {

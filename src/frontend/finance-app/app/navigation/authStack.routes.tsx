@@ -5,9 +5,9 @@ import { Categories } from "../screens/profile/Categories"
 import EditProfile from "../screens/auth/EditProfile"
 import DeleteProfile from "../screens/auth/DeleteProfile"
 import Profile from "../screens/profile/Profile"
-import AddTransaction from "../screens/transactions/AddTransaction"
+import Investments from "../screens/investment/Home"
+import CreateInvestment from "../screens/investment/CreateInvestment"
 import HelpScreen from "../screens/profile/HelpScreen"
-import { Wallet } from "../screens/wallet/Wallet"
 
 const Stack = createNativeStackNavigator()
 
@@ -42,19 +42,18 @@ export function ProfileStack() {
     </Stack.Navigator>
   )
 }
-
-export function WalletStack() {
+export function InvestmentStack() {
   return (
-    <Stack.Navigator initialRouteName={"Wallet"}>
+    <Stack.Navigator initialRouteName={"Investment"}>
       <Stack.Screen
-        name="Wallet"
-        component={Wallet}
+        name="Investment"
+        component={Investments}
         options={{ headerShown: false }}
       />
       <Stack.Screen
-        name="AddTransaction"
-        component={AddTransaction}
-        options={{ title: "Adicionar transação" }}
+        name="CreateInvestment"
+        component={CreateInvestment}
+        options={{ title: "Novo Investimento" }}
       />
     </Stack.Navigator>
   )

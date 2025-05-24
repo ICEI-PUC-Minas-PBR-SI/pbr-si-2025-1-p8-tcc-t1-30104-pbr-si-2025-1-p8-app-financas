@@ -15,7 +15,18 @@ export class SimulateInvestmentDto {
 
   @IsString()
   title: string;
+}
+
+export class SimulateOnlyDto {
+  @IsNumber()
+  amount: number;
+
+  @IsNumber()
+  months: number;
+
+  @IsNumber()
+  monthlyContribution: number;
 
   @IsString()
-  date: string;
+  type: string;
 }

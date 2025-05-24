@@ -92,21 +92,20 @@ const MonthlySummary = () => {
         <PieChart data={chartData} {...chartConfig} />
         <View style={styles.summaryText}>
           <Text style={styles.income}>
-            Receitas: {Number(info?.totalIncome || 0).toFixed(2)} R$
+            Receitas: R$ {Number(info?.totalIncome || 0).toFixed(2)}
           </Text>
           <Text style={styles.expense}>
-            Despesas: {Number(info?.totalExpense || 0).toFixed(2)} R$
+            Despesas: R$ {Number(info?.totalExpense || 0).toFixed(2)}
           </Text>
           <Text style={styles.total}>
-            Total:{" "}
+            Total: R${" "}
             {(
               Number(info?.totalIncome || 0) - Number(info?.totalExpense || 0)
             ).toFixed(2)}{" "}
-            R$
           </Text>
         </View>
 
-        <Text style={styles.sectionTitle}>Transações</Text>
+        <Text style={styles.sectionTitle}>Últimas Transações</Text>
         {info?.incomeByCategory &&
           Object.entries(info.incomeByCategory).map(
             ([categoryId, categoryData]) => (

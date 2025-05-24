@@ -6,7 +6,7 @@ import { TextInput } from "react-native-paper"
 import { DatePickerInput } from "react-native-paper-dates"
 import { useAuth } from "../../context/AuthContext"
 import { getRequest } from "../../services/apiServices"
-import { Category } from "../../services/types"
+import { Category } from "../../utils/types"
 import colors from "../../utils/colors"
 import { Formik } from "formik"
 import * as Yup from "yup"
@@ -185,6 +185,7 @@ export const AddTransaction = () => {
                   <DatePickerInput
                     locale="pt"
                     label="Escolha uma data"
+                    withDateFormatInLabel={false}
                     value={values.date}
                     onChange={d => {
                       setFieldValue("date", d)
@@ -238,7 +239,7 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    height: 200,
+    height: 120,
     backgroundColor: colors.primaryBackground,
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
@@ -269,7 +270,7 @@ const styles = StyleSheet.create({
   dropdown: {
     borderColor: "#ccc",
     borderRadius: 8,
-    marginBottom: 10,
+    marginBottom: 0,
   },
   dateButton: {
     flexDirection: "row",

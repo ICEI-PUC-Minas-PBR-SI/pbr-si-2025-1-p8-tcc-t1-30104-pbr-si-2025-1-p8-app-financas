@@ -29,3 +29,15 @@ export interface MessageItem {
   text: string
   sender: "user" | "bot"
 }
+
+export interface Investment {
+  id: number
+  type: string
+  title: string
+  amount: number
+  months: number
+  monthlyContribution: number
+  totalValue: number
+  rateValue: number
+  date: string
+}

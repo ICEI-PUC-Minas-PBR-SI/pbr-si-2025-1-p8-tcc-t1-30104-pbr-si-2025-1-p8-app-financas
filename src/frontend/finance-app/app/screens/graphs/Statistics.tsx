@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect, useState } from "react"
 import {
   View,
   Text,
@@ -8,21 +8,49 @@ import {
   TouchableOpacity,
 } from "react-native"
 import { LineChart } from "react-native-chart-kit"
-import Icon from "react-native-vector-icons/MaterialIcons"
 import colors from "../../utils/colors"
+import { useAuth } from "../../context/AuthContext"
+import { getRequest } from "../../services/apiServices"
+import StatisticsItem from "../../components/statistics/statisticsItem"
 
 const screenWidth = Dimensions.get("window").width
 
+const periodMap = {
+  Dia: "day",
+  Semanal: "week",
+  Mensal: "month",
+  Anual: "year",
+}
+
 export default function StatisticsScreen() {
-  const data = {
-    labels: ["19", "20", "21", "22", "23", "24"],
-    datasets: [
-      {
-        data: [700, 900, 1150, 1000, 800, 600],
-        strokeWidth: 2,
-        color: () => "#1A5D57",
-      },
-    ],
+  const { userId } = useAuth()
+  const [period, setPeriod] = useState<"Dia" | "Semanal" | "Mensal" | "Anual">(
+    "Anual",
+  )
+  const [category, setCategory] = useState<"expenses" | "income">("expenses")
+  const [chartData, setChartData] = useState({ labels: [], values: [] })
+  const [transactions, setTransactions] = useState([])
+
+  useEffect(() => {
+    fetchStatistics()
+  }, [period, category])
+
+  const fetchStatistics = async () => {
+    try {
+      const mappedPeriod = periodMap[period]
+
+      const data: any = await getRequest(
+        `graphs/statistics/${userId}?period=${mappedPeriod}&category=${category}`,
+      )
+
+      const { chart, transactions } = data
+      const values = chart.values.map((v: any) => Number(v))
+
+      setChartData({ labels: chart.labels, values })
+      setTransactions(transactions)
+    } catch (error) {
+      console.error("Erro ao buscar estatísticas:", error)
+    }
   }
 
   const chartConfig = {
@@ -37,6 +65,8 @@ export default function StatisticsScreen() {
     },
   }
 
+  const periods = ["Dia", "Semanal", "Mensal", "Anual"]
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -44,46 +74,67 @@ export default function StatisticsScreen() {
       </View>
       <ScrollView style={styles.contentContainer}>
         <View style={styles.tabs}>
-          <Text style={styles.tab}>Day</Text>
-          <Text style={styles.tab}>Week</Text>
-          <Text style={[styles.tab, styles.activeTab]}>Month</Text>
+          {periods.map(p => (
+            <TouchableOpacity key={p} onPress={() => setPeriod(p as any)}>
+              <Text style={[styles.tab, period === p && styles.activeTab]}>
+                {p.charAt(0).toUpperCase() + p.slice(1)}
+              </Text>
+            </TouchableOpacity>
+          ))}
         </View>
 
-        <View style={styles.dropdown}>
-          <Text style={styles.dropdownText}>Expenses ▼</Text>
-        </View>
-
-        <LineChart
-          data={data}
-          width={screenWidth - 32}
-          height={300}
-          chartConfig={chartConfig}
-          bezier
-          style={{ marginVertical: 8, borderRadius: 16 }}
-        />
+        <TouchableOpacity
+          style={styles.dropdown}
+          onPress={() =>
+            setCategory(category === "expenses" ? "income" : "expenses")
+          }
+        >
+          <Text style={styles.dropdownText}>
+            {category === "expenses" ? "Despesas ▼" : "Receitas ▼"}
+          </Text>
+        </TouchableOpacity>
+        {chartData.labels.length > 0 &&
+        chartData.values.every(v => !isNaN(v)) ? (
+          <LineChart
+            data={{
+              labels: chartData.labels,
+              datasets: [
+                {
+                  data: chartData.values,
+                  strokeWidth: 2,
+                  color: () => "#1A5D57",
+                },
+              ],
+            }}
+            width={screenWidth * 0.9}
+            height={350}
+            chartConfig={chartConfig}
+            bezier
+            style={{ marginVertical: 8, borderRadius: 16 }}
+            formatYLabel={yValue => `R$ ${yValue}`}
+            yLabelsOffset={2}
+          />
+        ) : (
+          <View style={styles.noDataContainer}>
+            <Text style={styles.noDataText}>
+              Nenhum dado disponível para o período selecionado.
+            </Text>
+          </View>
+        )}
 
         <View style={styles.expensesContainer}>
-          <Text style={styles.expenseTitle}>Expenses during the period</Text>
-
-          <View style={styles.expenseItem}>
-            <Icon name="arrow-downward" size={24} color="red" />
-            <View style={styles.expenseInfo}>
-              <Text style={styles.expenseLabel}>Transport (Plane ticket)</Text>
-              <Text style={styles.expenseDate}>Wednesday 4/19/2023</Text>
-            </View>
-            <Text style={styles.expenseAmount}>- R$ 480</Text>
-          </View>
-
-          <View style={styles.expenseItem}>
-            <Icon name="arrow-downward" size={24} color="red" />
-            <View style={styles.expenseInfo}>
-              <Text style={styles.expenseLabel}>
-                Investments (Real estate fund)
-              </Text>
-              <Text style={styles.expenseDate}>Saturday 4/22/2023</Text>
-            </View>
-            <Text style={styles.expenseAmount}>- R$ 600</Text>
-          </View>
+          <Text style={styles.expenseTitle}>
+            {category === "income" ? "Receitas" : "Despesas"} durante o período
+          </Text>
+          {transactions.length === 0 ? (
+            <Text style={{ textAlign: "center", marginTop: 20, color: "#555" }}>
+              Nenhuma transação encontrada para este período.
+            </Text>
+          ) : (
+            transactions
+              .filter(tx => tx !== undefined && tx !== null)
+              .map(tx => <StatisticsItem key={tx.id} transaction={tx} />)
+          )}
         </View>
       </ScrollView>
     </View>
@@ -134,34 +185,29 @@ const styles = StyleSheet.create({
   dropdownText: {
     fontSize: 14,
     color: "#555",
+    marginTop: 15,
   },
   expensesContainer: {
-    marginTop: 10,
+    marginTop: 0,
   },
   expenseTitle: {
     fontWeight: "bold",
     fontSize: 16,
     marginBottom: 10,
   },
-  expenseItem: {
-    flexDirection: "row",
+  noDataContainer: {
+    height: 300,
+    justifyContent: "center",
     alignItems: "center",
-    marginBottom: 15,
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    marginVertical: 8,
   },
-  expenseInfo: {
-    flex: 1,
-    marginHorizontal: 10,
-  },
-  expenseLabel: {
+
+  noDataText: {
     fontSize: 14,
-    fontWeight: "bold",
-  },
-  expenseDate: {
-    fontSize: 12,
     color: "#777",
-  },
-  expenseAmount: {
-    color: "red",
-    fontWeight: "bold",
+    textAlign: "center",
+    paddingHorizontal: 20,
   },
 })

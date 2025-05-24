@@ -5,7 +5,12 @@ import API_URL from "../services/api"
 
 interface AuthProps {
   authState?: { token: string | null; authenticated: boolean | null }
-  onRegister?: (name: string, email: string, password: string) => Promise<any>
+  onRegister?: (
+    name: string,
+    email: string,
+    document: string,
+    password: string,
+  ) => Promise<any>
   onLogin?: (email: string, password: string) => Promise<any>
   onLogout?: () => Promise<any>
   userInfo?: any
@@ -22,6 +27,7 @@ export const useAuth = () => {
 }
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  const [loading, setLoading] = useState(true)
   const [authState, setAuthState] = useState<{
     token: string | null
     authenticated: boolean | null
@@ -29,31 +35,55 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     token: null,
     authenticated: null,
   })
+
+  useEffect(() => {
+    if (authState.token) {
+      axios.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${authState.token}`
+    } else {
+      delete axios.defaults.headers.common["Authorization"]
+    }
+  }, [authState.token])
+
   const [userInfo, setUserInfo] = useState<any>(null)
   const [userId, setUserId] = useState<number | null>(null)
 
-  useEffect(() => {
-    const loadToken = async () => {
-      const token = await SecureStore.getItemAsync(TOKEN_KEY)
-      const storedUserId = await SecureStore.getItemAsync(USER_ID_KEY)
-      const storedUserInfo = await SecureStore.getItemAsync(USER_INFO_KEY)
+  const loadToken = async () => {
+    const token = await SecureStore.getItemAsync(TOKEN_KEY)
+    const storedUserId = await SecureStore.getItemAsync(USER_ID_KEY)
+    const storedUserInfo = await SecureStore.getItemAsync(USER_INFO_KEY)
 
-      if (token) {
-        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`
-        setAuthState({ token, authenticated: true })
+    if (token) {
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`
+      setAuthState({ token, authenticated: true })
 
-        if (storedUserId) setUserId(Number(storedUserId))
-        if (storedUserInfo) setUserInfo(JSON.parse(storedUserInfo))
-      }
+      if (storedUserId) setUserId(Number(storedUserId))
+      if (storedUserInfo) setUserInfo(JSON.parse(storedUserInfo))
+    } else {
+      await logout()
     }
+  }
+
+  useEffect(() => {
     loadToken()
+    setLoading(false)
   }, [])
 
-  const register = async (name: string, email: string, password: string) => {
+  if (loading) {
+    return null
+  }
+  const register = async (
+    name: string,
+    email: string,
+    document: string,
+    password: string,
+  ) => {
     try {
       const result = await API_URL.post(`/auth/register`, {
         name,
         email,
+        document,
         password,
       })
     } catch (error) {

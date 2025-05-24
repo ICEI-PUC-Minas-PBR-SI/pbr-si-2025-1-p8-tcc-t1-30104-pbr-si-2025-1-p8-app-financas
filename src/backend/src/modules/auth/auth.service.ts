@@ -49,13 +49,16 @@ export class AuthService {
     createUser.name = body.name;
     createUser.email = body.email;
     createUser.password = await bcrypt.hash(body.password, 10);
+    createUser.document = body.document;
 
-    const verifyUser = await this.prismaService.user.findUnique({
-      where: { email: body.email },
+    const verifyUser = await this.prismaService.user.findFirst({
+      where: {
+        OR: [{ email: body.email }, { document: body.document }],
+      },
     });
 
     if (verifyUser) {
-      throw new UnauthorizedException("E-mail já cadastrado!");
+      throw new UnauthorizedException("E-mail ou CPF já cadastrado!");
     }
 
     const user = await this.usersService.createUser(createUser);

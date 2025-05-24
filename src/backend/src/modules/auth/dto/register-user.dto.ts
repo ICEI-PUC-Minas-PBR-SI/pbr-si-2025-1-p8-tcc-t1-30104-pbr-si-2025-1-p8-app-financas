@@ -11,4 +11,7 @@ export class RegisterDto implements Prisma.UserCreateInput {
 
   @IsString()
   name: string;
+
+  @IsString()
+  document: string;
 }

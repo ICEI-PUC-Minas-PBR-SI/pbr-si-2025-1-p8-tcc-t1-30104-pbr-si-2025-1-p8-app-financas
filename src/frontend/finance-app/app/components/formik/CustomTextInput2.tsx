@@ -44,7 +44,7 @@ const CustomTextInput: React.FC<CustomTextInputProps> = ({
 
 const styles = StyleSheet.create({
   input: {
-    marginTop: 5,
+    marginTop: 0,
     marginBottom: 2,
     backgroundColor: "#fff",
     borderRadius: 8,

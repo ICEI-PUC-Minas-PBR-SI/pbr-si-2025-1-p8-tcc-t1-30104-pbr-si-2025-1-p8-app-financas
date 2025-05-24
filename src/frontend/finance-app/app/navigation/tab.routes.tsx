@@ -6,8 +6,9 @@ import { useFocusEffect } from "@react-navigation/native"
 import Wallet from "../screens/wallet/Wallet"
 import AddTransaction from "../screens/transactions/AddTransaction"
 import MonthlySummary from "../screens/graphs/MonthlySummary"
-import { ProfileStack } from "./authStack.routes"
+import { InvestmentStack, ProfileStack } from "./authStack.routes"
 import StatisticsScreen from "../screens/graphs/Statistics"
+import Investments from "../screens/investment/Home"
 const { width } = Dimensions.get("window")
 
 const Tab = createBottomTabNavigator()
@@ -61,6 +62,9 @@ export const TabRoutes = () => {
     <Tab.Navigator
       screenOptions={({ route }: { route: { name: string } }) => ({
         headerShown: false,
+        tabBarLabelStyle: {
+          fontSize: 9,
+        },
         tabBarIcon: ({ color, size }: { color: string; size: number }) => {
           let iconName = ""
 
@@ -71,11 +75,14 @@ export const TabRoutes = () => {
             case "Transação":
               iconName = "cash-outline"
               break
-            case "Gráficos":
-              iconName = "bar-chart-outline"
+            case "Gráfico":
+              iconName = "pie-chart-outline"
               break
             case "Estatísticas":
-              iconName = "bar-chart-outline"
+              iconName = "stats-chart-outline"
+              break
+            case "Investir":
+              iconName = "trending-up-outline"
               break
             case "Perfil":
               iconName = "person-outline"
@@ -101,13 +108,18 @@ export const TabRoutes = () => {
         options={{ unmountOnBlur: true }}
       />
       <Tab.Screen
-        name="Gráficos"
+        name="Gráfico"
         component={withSlideFade(MonthlySummary)}
         options={{ unmountOnBlur: true }}
       />
       <Tab.Screen
         name="Estatísticas"
         component={withSlideFade(StatisticsScreen)}
+        options={{ unmountOnBlur: true }}
+      />
+      <Tab.Screen
+        name="Investir"
+        component={withSlideFade(InvestmentStack)}
         options={{ unmountOnBlur: true }}
       />
       <Tab.Screen

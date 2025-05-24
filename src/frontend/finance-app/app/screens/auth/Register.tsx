@@ -3,17 +3,22 @@ import { View, Text, StyleSheet } from "react-native"
 import { Formik } from "formik"
 import * as Yup from "yup"
 import { useAuth } from "../../context/AuthContext"
+import { useNavigation } from "@react-navigation/native"
+import { TextInput } from "react-native-paper"
+
 import CustomTextInput from "../../components/formik/CustomTextInput"
 import ErrorMessageFormik from "../../components/formik/ErrorMessageFormik"
 import CustomButton from "../../components/formik/CustomButton"
-import colors from "../../utils/colors"
-import { TextInput } from "react-native-paper"
-import { useNavigation } from "@react-navigation/native"
 import SuccessModal from "../../components/modals/SuccessModal"
+import ErrorModal from "../../components/modals/ErrorModal"
+
+import colors from "../../utils/colors"
+import { formatCPF, unformatCPF } from "../../utils/format"
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required("Nome completo é obrigatório"),
   email: Yup.string().email("Email inválido").required("Email é obrigatório"),
+  document: Yup.string().required("CPF é obrigatório"),
   password: Yup.string()
     .min(6, "A senha deve ter pelo menos 6 caracteres")
     .required("Senha é obrigatória"),
@@ -24,25 +29,31 @@ const validationSchema = Yup.object().shape({
 
 export default function Signup() {
   const { onRegister } = useAuth()
+  const navigation = useNavigation()
+
   const [secureText, setSecureText] = useState(true)
   const [secureTextConfirm, setSecureTextConfirm] = useState(true)
   const [successModalVisible, setSuccessModalVisible] = useState(false)
-  const navigation = useNavigation()
+  const [errorModalVisible, setErrorModalVisible] = useState(false)
+  const [errorModalText, setErrorModalText] = useState("")
 
   const register = async (values: {
     name: string
     email: string
     password: string
+    document: string
   }) => {
     try {
       const result = await onRegister!(
         values.name,
         values.email,
+        unformatCPF(values.document),
         values.password,
       )
 
-      if (result && result.error) {
-        alert(result.msg)
+      if (result?.error) {
+        setErrorModalText(result.msg)
+        setErrorModalVisible(true)
       } else {
         setSuccessModalVisible(true)
       }
@@ -56,10 +67,12 @@ export default function Signup() {
       <View style={styles.logoContainer}>
         <Text style={styles.logoText}>Faça seu cadastro!</Text>
       </View>
+
       <Formik
         initialValues={{
           name: "",
           email: "",
+          document: "",
           password: "",
           confirmPassword: "",
         }}
@@ -96,6 +109,17 @@ export default function Signup() {
               error={touched.email ? errors.email : undefined}
             />
 
+            <CustomTextInput
+              label="CPF"
+              value={values.document}
+              onChangeText={text => handleChange("document")(formatCPF(text))}
+              onBlur={handleBlur("document")}
+              keyboardType="numeric"
+            />
+            <ErrorMessageFormik
+              error={touched.document ? errors.document : undefined}
+            />
+
             <TextInput
               label="Senha"
               value={values.password}
@@ -113,7 +137,6 @@ export default function Signup() {
                 />
               }
             />
-
             <ErrorMessageFormik
               error={touched.password ? errors.password : undefined}
             />
@@ -135,7 +158,6 @@ export default function Signup() {
                 />
               }
             />
-
             <ErrorMessageFormik
               error={
                 touched.confirmPassword ? errors.confirmPassword : undefined
@@ -143,6 +165,12 @@ export default function Signup() {
             />
 
             <CustomButton onPress={() => handleSubmit()} title="Cadastrar" />
+
+            <ErrorModal
+              visible={errorModalVisible}
+              message={errorModalText}
+              onClose={() => setErrorModalVisible(false)}
+            />
           </View>
         )}
       </Formik>

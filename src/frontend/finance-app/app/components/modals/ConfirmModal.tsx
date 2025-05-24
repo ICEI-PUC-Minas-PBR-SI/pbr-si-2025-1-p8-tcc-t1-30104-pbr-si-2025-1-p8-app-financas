@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
   },
   actions: {
     flexDirection: "row",
-    justifyContent: "flex-end",
+    justifyContent: "space-between",
   },
   cancelButton: {
     backgroundColor: colors.error,

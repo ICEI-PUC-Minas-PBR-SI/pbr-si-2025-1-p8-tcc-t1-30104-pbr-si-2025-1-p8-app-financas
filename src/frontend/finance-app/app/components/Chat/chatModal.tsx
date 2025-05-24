@@ -12,7 +12,7 @@ import {
 } from "react-native"
 
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons"
-import { MessageItem } from "../../services/types"
+import { MessageItem } from "../../utils/types"
 import { sendMessageToAI } from "../../services/chatService"
 import colors from "../../utils/colors"
 
@@ -81,7 +81,6 @@ const ChatModal: React.FC<ChatModalProps> = ({ visible, onClose }) => {
       <View
         style={[styles.messageRow, isUser ? styles.userRow : styles.botRow]}
       >
-        {/* Ícone do Bot à Esquerda */}
         {!isUser && renderAvatar("bot")}
 
         <View

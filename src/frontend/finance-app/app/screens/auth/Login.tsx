@@ -2,13 +2,15 @@ import React, { useState } from "react"
 import { View, Text, StyleSheet } from "react-native"
 import { useAuth } from "../../context/AuthContext"
 import { Link } from "@react-navigation/native"
-import CustomTextInput from "../../components/formik/CustomTextInput"
 import { Formik } from "formik"
 import * as Yup from "yup"
+import { TextInput } from "react-native-paper"
+
+import CustomTextInput from "../../components/formik/CustomTextInput"
 import ErrorMessageFormik from "../../components/formik/ErrorMessageFormik"
 import CustomButton from "../../components/formik/CustomButton"
+import ErrorModal from "../../components/modals/ErrorModal"
 import colors from "../../utils/colors"
-import { TextInput } from "react-native-paper"
 
 const validationSchema = Yup.object().shape({
   email: Yup.string().email("Email inválido").required("Email é obrigatório"),
@@ -16,14 +18,17 @@ const validationSchema = Yup.object().shape({
 })
 
 export default function Login() {
-  const { onLogin, authState } = useAuth()
+  const { onLogin } = useAuth()
   const [secureText, setSecureText] = useState(true)
+  const [errorModalVisible, setErrorModalVisible] = useState(false)
+  const [errorModalText, setErrorModalText] = useState("")
 
   const login = async (values: { email: string; password: string }) => {
     try {
       const result = await onLogin!(values.email, values.password)
       if (result?.error) {
-        alert(result.msg)
+        setErrorModalText(result.msg)
+        setErrorModalVisible(true)
       }
     } catch (e) {
       console.log(e)
@@ -37,6 +42,7 @@ export default function Login() {
           Gestão no<Text style={{ color: colors.black }}> Bolso</Text>
         </Text>
       </View>
+
       <Formik
         initialValues={{ email: "", password: "" }}
         validationSchema={validationSchema}
@@ -59,7 +65,6 @@ export default function Login() {
               onBlur={handleBlur("email")}
               keyboardType="email-address"
             />
-
             <ErrorMessageFormik
               error={touched.email ? errors.email : undefined}
             />
@@ -81,7 +86,6 @@ export default function Login() {
                 />
               }
             />
-
             <ErrorMessageFormik
               error={touched.password ? errors.password : undefined}
             />
@@ -101,6 +105,12 @@ export default function Login() {
           </View>
         )}
       </Formik>
+
+      <ErrorModal
+        visible={errorModalVisible}
+        message={errorModalText}
+        onClose={() => setErrorModalVisible(false)}
+      />
     </View>
   )
 }

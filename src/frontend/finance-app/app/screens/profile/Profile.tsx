@@ -12,12 +12,11 @@ import colors from "../../utils/colors"
 import { useNavigation } from "@react-navigation/native"
 
 const options = [
-  { id: "0", icon: "person-outline", label: "Categorias" },
+  { id: "0", icon: "pricetags-outline", label: "Categorias" },
   { id: "1", icon: "create-outline", label: "Editar Perfil" },
-  { id: "2", icon: "settings-outline", label: "Configurações" },
-  { id: "3", icon: "help-circle-outline", label: "Ajuda" },
-  { id: "4", icon: "trash", label: "Deletar Conta" },
-  { id: "5", icon: "log-out-outline", label: "Sair" },
+  { id: "2", icon: "help-circle-outline", label: "Ajuda" },
+  { id: "3", icon: "trash", label: "Deletar Conta" },
+  { id: "4", icon: "log-out-outline", label: "Sair" },
 ]
 
 export const Profile = () => {
@@ -36,10 +35,6 @@ export const Profile = () => {
 
       case "Editar Perfil":
         navigation.navigate("EditProfile")
-        break
-
-      case "Configurações":
-        console.log("Navegar para tela de configurações")
         break
 
       case "Ajuda":
