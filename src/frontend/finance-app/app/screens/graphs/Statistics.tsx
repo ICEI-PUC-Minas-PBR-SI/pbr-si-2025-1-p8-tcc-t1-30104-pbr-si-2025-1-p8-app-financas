@@ -11,7 +11,7 @@ import { LineChart } from "react-native-chart-kit"
 import colors from "../../utils/colors"
 import { useAuth } from "../../context/AuthContext"
 import { getRequest } from "../../services/apiServices"
-import StatisticsItem from "../../components/statistics/statisticsItem"
+import StatisticsItem from "../../components/statistics/StatisticsItem"
 
 const screenWidth = Dimensions.get("window").width
 
