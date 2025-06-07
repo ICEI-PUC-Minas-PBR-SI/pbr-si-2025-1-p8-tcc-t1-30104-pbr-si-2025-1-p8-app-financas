@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useCallback, useEffect, useState } from "react"
 import {
   View,
   Text,
@@ -12,6 +12,7 @@ import colors from "../../utils/colors"
 import { useAuth } from "../../context/AuthContext"
 import { getRequest } from "../../services/apiServices"
 import StatisticsItem from "../../components/statistics/StatisticsItem"
+import { useFocusEffect } from "@react-navigation/native"
 
 const screenWidth = Dimensions.get("window").width
 
@@ -30,6 +31,12 @@ export default function StatisticsScreen() {
   const [category, setCategory] = useState<"expenses" | "income">("expenses")
   const [chartData, setChartData] = useState({ labels: [], values: [] })
   const [transactions, setTransactions] = useState([])
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchStatistics()
+    }, [period, category]),
+  )
 
   useEffect(() => {
     fetchStatistics()

@@ -111,7 +111,7 @@ const SimulationModal: React.FC<SimulationModalProps> = ({
                 onClose()
               }}
             >
-              <Text>Cancelar</Text>
+              <Text style={styles.buttonText}>Cancelar</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -123,7 +123,7 @@ const SimulationModal: React.FC<SimulationModalProps> = ({
               onPress={handleSave}
               disabled={!title.trim()}
             >
-              <Text style={styles.saveButtonText}>Salvar</Text>
+              <Text style={styles.buttonText}>Salvar</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -218,8 +218,8 @@ const styles = StyleSheet.create({
   disabledButton: {
     opacity: 0.5,
   },
-  saveButtonText: {
-    color: "#fff",
+  buttonText: {
+    color: colors.white,
   },
 })
 

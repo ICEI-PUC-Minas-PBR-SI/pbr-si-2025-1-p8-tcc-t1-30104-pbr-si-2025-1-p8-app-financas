@@ -1,11 +1,5 @@
-import React, { useState, useEffect } from "react"
-import {
-  View,
-  Text,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-} from "react-native"
+import React, { useState } from "react"
+import { View, Text, ScrollView, StyleSheet } from "react-native"
 import { WalletCard } from "../../components/wallet/WalletCard"
 import { TransactionItem } from "../../components/wallet/TransactionItem"
 import ChatButton from "../../components/chat/ChatButton"
@@ -29,7 +23,24 @@ export const Wallet: React.FC = () => {
           const data: TransactionSummary = await getRequest(
             `transaction/summary/${userId}`,
           )
-          setTransactions(data.transactions)
+
+          const sortedTransactions = data.transactions.sort((a, b) => {
+            const [dayA, monthA, yearA] = a.date.split("/").map(Number)
+            const [dayB, monthB, yearB] = b.date.split("/").map(Number)
+
+            const dateA = new Date(yearA, monthA - 1, dayA)
+            const dateB = new Date(yearB, monthB - 1, dayB)
+
+            if (dateB.getTime() !== dateA.getTime()) {
+              return dateB.getTime() - dateA.getTime()
+            }
+
+            return (
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+            )
+          })
+
+          setTransactions(sortedTransactions)
         } catch (error) {
           console.error("Erro ao buscar transações:", error)
         }

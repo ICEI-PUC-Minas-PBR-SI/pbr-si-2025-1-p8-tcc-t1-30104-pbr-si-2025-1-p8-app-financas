@@ -76,63 +76,75 @@ const MonthlySummary = () => {
       </View>
 
       <ScrollView contentContainerStyle={styles.contentContainer}>
-        <Text style={styles.sectionTitle}>Visão geral</Text>
-        <OverviewItem
-          label="Receitas"
-          value={info?.totalIncome || "0"}
-          color="#4CAF50"
-        />
-        <OverviewItem
-          label="Despesas"
-          value={info?.totalExpense || "0"}
-          color="#f44336"
-        />
+        {Number(info?.totalIncome || 0) > 0 ||
+        Number(info?.totalExpense || 0) > 0 ? (
+          <>
+            <Text style={styles.sectionTitle}>Visão geral</Text>
+            <OverviewItem
+              label="Receitas"
+              value={info?.totalIncome || "0"}
+              color="#4CAF50"
+            />
+            <OverviewItem
+              label="Despesas"
+              value={info?.totalExpense || "0"}
+              color="#f44336"
+            />
 
-        <Text style={styles.sectionTitle}>Resumo</Text>
-        <PieChart data={chartData} {...chartConfig} />
-        <View style={styles.summaryText}>
-          <Text style={styles.income}>
-            Receitas: R$ {Number(info?.totalIncome || 0).toFixed(2)}
-          </Text>
-          <Text style={styles.expense}>
-            Despesas: R$ {Number(info?.totalExpense || 0).toFixed(2)}
-          </Text>
-          <Text style={styles.total}>
-            Total: R${" "}
-            {(
-              Number(info?.totalIncome || 0) - Number(info?.totalExpense || 0)
-            ).toFixed(2)}{" "}
-          </Text>
-        </View>
+            <Text style={styles.sectionTitle}>Resumo</Text>
+            <PieChart data={chartData} {...chartConfig} />
+            <View style={styles.summaryText}>
+              <Text style={styles.income}>
+                Receitas: R$ {Number(info?.totalIncome || 0).toFixed(2)}
+              </Text>
+              <Text style={styles.expense}>
+                Despesas: R$ {Number(info?.totalExpense || 0).toFixed(2)}
+              </Text>
+              <Text style={styles.total}>
+                Total: R${" "}
+                {(
+                  Number(info?.totalIncome || 0) -
+                  Number(info?.totalExpense || 0)
+                ).toFixed(2)}{" "}
+              </Text>
+            </View>
 
-        <Text style={styles.sectionTitle}>Últimas Transações</Text>
-        {info?.incomeByCategory &&
-          Object.entries(info.incomeByCategory).map(
-            ([categoryId, categoryData]) => (
-              <TransactionItem
-                key={categoryId}
-                categoryId={categoryId}
-                categoryName={categoryData.name}
-                type="entrada"
-                amount={categoryData.lastTransaction?.amount || "0"}
-                date={categoryData.lastTransaction?.date || "N/A"}
-              />
-            ),
-          )}
+            <Text style={styles.sectionTitle}>Últimas Transações</Text>
+            {info?.incomeByCategory &&
+              Object.entries(info.incomeByCategory).map(
+                ([categoryId, categoryData]) => (
+                  <TransactionItem
+                    key={categoryId}
+                    categoryId={categoryId}
+                    categoryName={categoryData.name}
+                    type="entrada"
+                    amount={categoryData.lastTransaction?.amount || "0"}
+                    date={categoryData.lastTransaction?.date || "N/A"}
+                  />
+                ),
+              )}
 
-        {info?.expenseByCategory &&
-          Object.entries(info.expenseByCategory).map(
-            ([categoryId, categoryData]) => (
-              <TransactionItem
-                key={categoryId}
-                categoryId={categoryId}
-                categoryName={categoryData.name}
-                type="saida"
-                amount={categoryData.lastTransaction?.amount || "0"}
-                date={categoryData.lastTransaction?.date || "N/A"}
-              />
-            ),
-          )}
+            {info?.expenseByCategory &&
+              Object.entries(info.expenseByCategory).map(
+                ([categoryId, categoryData]) => (
+                  <TransactionItem
+                    key={categoryId}
+                    categoryId={categoryId}
+                    categoryName={categoryData.name}
+                    type="saida"
+                    amount={categoryData.lastTransaction?.amount || "0"}
+                    date={categoryData.lastTransaction?.date || "N/A"}
+                  />
+                ),
+              )}
+          </>
+        ) : (
+          <View style={styles.noDataContainer}>
+            <Text style={styles.noDataText}>
+              Você ainda não teve movimentações esse mês.
+            </Text>
+          </View>
+        )}
       </ScrollView>
     </View>
   )
@@ -178,6 +190,18 @@ const styles = StyleSheet.create({
   },
   total: {
     fontWeight: "bold",
+  },
+  noDataContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 50,
+  },
+  noDataText: {
+    fontSize: 16,
+    color: "#555",
+    fontStyle: "italic",
+    textAlign: "center",
   },
 })
 

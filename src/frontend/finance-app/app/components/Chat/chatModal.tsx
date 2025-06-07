@@ -58,14 +58,15 @@ const ChatModal: React.FC<ChatModalProps> = ({ visible, onClose }) => {
       const response = await sendMessageToAI(textToSend)
       const botMessage = createMessage(response, "bot")
       setMessages(prev => [...prev, botMessage])
+      setTimeout(scrollToEnd, 100)
+      setLoading(false)
     } catch (error) {
       const errorMessage = createMessage(
         "Erro ao obter resposta do Assistente.",
         "bot",
       )
       setMessages(prev => [...prev, errorMessage])
-    } finally {
-      setLoading(false)
+      setTimeout(scrollToEnd, 100)
     }
   }
 
@@ -137,6 +138,7 @@ const ChatModal: React.FC<ChatModalProps> = ({ visible, onClose }) => {
             data={messages}
             keyExtractor={item => item.id}
             renderItem={renderMessageItem}
+            onContentSizeChange={scrollToEnd}
           />
 
           {!messages.some(msg => msg.sender === "user") && (
