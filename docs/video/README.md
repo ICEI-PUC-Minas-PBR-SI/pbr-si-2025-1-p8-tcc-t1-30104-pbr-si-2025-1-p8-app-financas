@@ -1,4 +1,4 @@
 
 # Vídeo
 
-Vídeos do Trabalho de Conclusão de Curso (TCC).
+Vídeo do Trabalho de Conclusão de Curso (TCC).
